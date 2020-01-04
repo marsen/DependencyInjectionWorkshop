@@ -12,7 +12,7 @@ namespace DependencyInjectionWorkshop.Models
         /// </summary>
         /// <param name="accountId">The account identifier.</param>
         /// <returns></returns>
-        string PasswordFromDb(string accountId);
+        string Password(string accountId);
     }
 
     public class ProfileDao : IProfile
@@ -26,7 +26,7 @@ namespace DependencyInjectionWorkshop.Models
         /// </summary>
         /// <param name="accountId">The account identifier.</param>
         /// <returns></returns>
-        public string PasswordFromDb(string accountId)
+        public string Password(string accountId)
         {
             string passwordFromDb;
             using (var connection = new SqlConnection("my connection string"))

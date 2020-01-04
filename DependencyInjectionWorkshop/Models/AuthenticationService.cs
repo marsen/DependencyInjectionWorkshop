@@ -48,7 +48,7 @@ namespace DependencyInjectionWorkshop.Models
                 throw new FailedTooManyTimesException(){AccountId = accountId};
             }
 
-            var passwordFromDb = _profileDao.PasswordFromDb(accountId);
+            var passwordFromDb = _profileDao.Password(accountId);
 
             var hashedPassword = _sha256Adapter.HashedPassword(password);
 
