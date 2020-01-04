@@ -20,7 +20,7 @@ namespace DependencyInjectionWorkshop.Models
         /// </summary>
         /// <param name="accountId">The account identifier.</param>
         /// <returns></returns>
-        private string PasswordFromDb(string accountId)
+        public string PasswordFromDb(string accountId)
         {
             string passwordFromDb;
             using (var connection = new SqlConnection("my connection string"))
