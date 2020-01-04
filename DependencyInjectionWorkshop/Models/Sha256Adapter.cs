@@ -7,9 +7,9 @@ namespace DependencyInjectionWorkshop.Models
         /// <summary>
         /// Hasheds the password.
         /// </summary>
-        /// <param name="password">The password.</param>
+        /// <param name="input">The password.</param>
         /// <returns></returns>
-        string ComputeHash(string password);
+        string ComputeHash(string input);
     }
 
     public class Sha256Adapter : IHash
@@ -18,11 +18,11 @@ namespace DependencyInjectionWorkshop.Models
         {
         }
 
-        public string ComputeHash(string password)
+        public string ComputeHash(string input)
         {
             var crypt = new System.Security.Cryptography.SHA256Managed();
             var hash = new StringBuilder();
-            var crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(password));
+            var crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(input));
             foreach (var theByte in crypto)
             {
                 hash.Append(theByte.ToString("x2"));
