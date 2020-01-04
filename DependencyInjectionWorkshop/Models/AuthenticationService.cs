@@ -13,10 +13,10 @@ namespace DependencyInjectionWorkshop.Models
     {
         public bool Verify(string accountId, string password, string otp)
         {
-
             var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
+            
+            //check account locked
             var isLockedResponse = httpClient.PostAsJsonAsync("api/failedCounter/IsLocked", accountId).Result;
-
             isLockedResponse.EnsureSuccessStatusCode();
             if (isLockedResponse.Content.ReadAsAsync<bool>().Result)
             {
