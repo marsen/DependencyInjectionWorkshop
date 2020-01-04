@@ -8,18 +8,18 @@ namespace DependencyInjectionWorkshop.Models
         private readonly IProfile _profile;
         private readonly IHash _hash;
         private readonly INotification _notification;
-        private readonly IFailCounter _failCounter;
+        private readonly IFailCounter _failedCounter;
         private readonly IOtpService _otpService;
-        private readonly ILog _nLogAdapter;
+        private readonly ILog _logger;
 
-        public AuthenticationService(IProfile profile, IHash hash, INotification notification, IFailCounter failCounter, IOtpService otpService, ILog nLogAdapter)
+        public AuthenticationService(IProfile profile, IHash hash, INotification notification, IFailCounter failedCounter, IOtpService otpService, ILog logger)
         {
             _profile = profile;
             _hash = hash;
             _notification = notification;
-            _failCounter = failCounter;
+            _failedCounter = failedCounter;
             _otpService = otpService;
-            _nLogAdapter = nLogAdapter;
+            _logger = logger;
         }
 
         public AuthenticationService()
@@ -27,9 +27,9 @@ namespace DependencyInjectionWorkshop.Models
             _profile = new ProfileDao();
             _hash = new Sha256Adapter();
             _notification = new SlackAdapter();
-            _failCounter = new FailCounter();
+            _failedCounter = new FailCounter();
             _otpService = new OtpService();
-            _nLogAdapter = new NLogAdapter();
+            _logger = new NLogAdapter();
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace DependencyInjectionWorkshop.Models
         /// <exception cref="DependencyInjectionWorkshop.Models.FailedTooManyTimesException"></exception>
         public bool Verify(string accountId, string password, string otp)
         {
-            var isLocked = _failCounter.IsLocked(accountId);
+            var isLocked = _failedCounter.IsLocked(accountId);
             if (isLocked)
             {
                 throw new FailedTooManyTimesException(){AccountId = accountId};
@@ -56,15 +56,15 @@ namespace DependencyInjectionWorkshop.Models
 
             if (currentOtp == otp && hashedPassword == passwordFromDb)
             {
-                _failCounter.Reset(accountId);
+                _failedCounter.Reset(accountId);
                 return true;
             }
             else
             {
-                _failCounter.Add(accountId);
+                _failedCounter.Add(accountId);
 
-                var failedCount = _failCounter.Get(accountId);
-                _nLogAdapter.Info(accountId, failedCount);
+                var failedCount = _failedCounter.Get(accountId);
+                _logger.Info(accountId, failedCount);
                 _notification.Notify(accountId);
                     return false;
             }
