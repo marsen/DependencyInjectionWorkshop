@@ -14,7 +14,7 @@ namespace DependencyInjectionWorkshopTests
         private ILogger _logger;
         private INotification _notification;
         private IFailedCounter _failedCounter;
-        private AuthenticationService _authenticationService;
+        private IAuthentication _authenticationService;
         private const string DefaultAccountId = "joey";
         private const int DefaultFailedCount = 91;
 
@@ -29,6 +29,7 @@ namespace DependencyInjectionWorkshopTests
             _failedCounter = Substitute.For<IFailedCounter>();
             _authenticationService =
                 new AuthenticationService(_profile, _hash, _notification, _failedCounter, _otpService, _logger);
+             _authenticationService = new NotificationDecorator(_authenticationService, _notification);
         }
 
         [Test]

@@ -23,6 +23,7 @@ namespace DependencyInjectionWorkshop.Models
             _failedCounter = failedCounter;
             _otpService = otpService;
             _logger = logger;
+
         }
 
         public AuthenticationService()
