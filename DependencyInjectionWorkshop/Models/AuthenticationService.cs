@@ -66,9 +66,14 @@ namespace DependencyInjectionWorkshop.Models
 
                 var failedCount = _failedCounter.Get(accountId);
                 _logger.Info($"accountId:{accountId} failed times:{failedCount}");
-                _notification.Notify(accountId, $"account:{accountId} try to login failed");
+                Notify(accountId);
                 return false;
             }
+        }
+
+        private void Notify(string accountId)
+        {
+            _notification.Notify(accountId, $"account:{accountId} try to login failed");
         }
     }
 }
