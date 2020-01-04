@@ -22,8 +22,17 @@
             {
                 Reset(accountId);
             }
+            else
+            {
+                Add(accountId);
+            }
 
             return verify;
+        }
+
+        public void Add(string accountId)
+        {
+            _failedCounter.Add(accountId);
         }
     }
 

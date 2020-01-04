@@ -30,6 +30,11 @@ namespace DependencyInjectionWorkshop.Models
             _logger = new NLoggerAdapter();
         }
 
+        public IFailedCounter FailedCounter
+        {
+            get { return _failedCounter; }
+        }
+
         /// <summary>
         /// Verifies the specified account identifier.
         /// </summary>
@@ -58,12 +63,14 @@ namespace DependencyInjectionWorkshop.Models
             }
             else
             {
-                _failedCounter.Add(accountId);
+                //a.Add(accountId, this);
 
                 var failedCount = _failedCounter.Get(accountId);
                 _logger.Info($"accountId:{accountId} failed times:{failedCount}");
                 return false;
             }
         }
+
+        //private FailedCounterDecorator a;
     }
 }
