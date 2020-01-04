@@ -34,25 +34,20 @@ namespace DependencyInjectionWorkshop.Models
         {
             var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
             
-            //check account locked
             var isLocked = _failCounter.IsLocked(accountId, httpClient);
             if (isLocked)
             {
                 throw new FailedTooManyTimesException(){AccountId = accountId};
             }
-            //// get password
+
             var passwordFromDb = _profileDao.PasswordFromDb(accountId);
 
-            //// get hash
             var hashedPassword = _sha256Adapter.HashedPassword(password);
 
-            //// get otp
             var currentOtp = _otpAdapter.GetOtp(accountId, httpClient);
 
-            //// compare
             if (currentOtp == otp && hashedPassword == passwordFromDb)
             {
-                // 失敗次數歸0
                 _failCounter.Reset(accountId, httpClient);
                 return true;
             }
@@ -63,7 +58,7 @@ namespace DependencyInjectionWorkshop.Models
                 var failedCount = _failCounter.Get(accountId, httpClient);
                 _nLogAdapter.Info(accountId, failedCount);
                 _slackAdapter.Notify(accountId);
-                return false;
+                    return false;
             }
         }
     }
