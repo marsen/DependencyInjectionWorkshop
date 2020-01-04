@@ -12,7 +12,7 @@ namespace DependencyInjectionWorkshop.Models
     {
         public bool Verify(string accountId, string password, string otp)
         {
-
+            //// get password
             string passwordFromDb;
             using (var connection = new SqlConnection("my connection string"))
             {
@@ -20,7 +20,8 @@ namespace DependencyInjectionWorkshop.Models
                     commandType: CommandType.StoredProcedure).SingleOrDefault();
 
             }
-
+            
+            //// get hash
             var crypt = new System.Security.Cryptography.SHA256Managed();
             var hash = new StringBuilder();
             var crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(password));
@@ -31,14 +32,16 @@ namespace DependencyInjectionWorkshop.Models
 
             var hashedPassword = hash.ToString();
 
+            //// get otp
             var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
             var response = httpClient.PostAsJsonAsync("api/otps", accountId).Result;
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception($"web api error, accountId:{accountId}");
             }
-
             var currentOtp = response.Content.ReadAsAsync<string>().Result;
+            
+            //// compare
             if (currentOtp == otp && hashedPassword == passwordFromDb)
             {
                 return true;
