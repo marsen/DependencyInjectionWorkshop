@@ -3,22 +3,6 @@ using System.Net.Http;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public class NotificationDecorator
-    {
-        private AuthenticationService _authenticationService;
-        private INotification _notification;
-
-        public NotificationDecorator(AuthenticationService authenticationService, INotification notification)
-        {
-            _authenticationService = authenticationService;
-        }
-
-        private void Notify(string accountId)
-        {
-            _notification.Notify(accountId, $"account:{accountId} try to login failed");
-        }
-    }
-
     public class AuthenticationService : IAuthentication
     {
         private readonly IProfile _profile;
