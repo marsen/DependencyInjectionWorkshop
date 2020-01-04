@@ -50,7 +50,7 @@ namespace DependencyInjectionWorkshop.Models
 
             var passwordFromDb = _profileDao.Password(accountId);
 
-            var hashedPassword = _sha256Adapter.HashedPassword(password);
+            var hashedPassword = _sha256Adapter.ComputeHash(password);
 
             var currentOtp = _otpAdapter.GetOtp(accountId);
 
