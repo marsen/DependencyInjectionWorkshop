@@ -34,10 +34,7 @@ namespace DependencyInjectionWorkshopTests
         [Test]
         public void is_valid()
         {
-            GivenPasswordFromDB(DefaultAccountId, "my hashed password");
-            GivenHashedPassword("1234", "my hashed password");
-            GivenOtp(DefaultAccountId, "123456");
-
+            WhenValid();
             ShouldBeValid(DefaultAccountId, "1234", "123456");
         }
 
@@ -48,27 +45,10 @@ namespace DependencyInjectionWorkshopTests
             FailedCounterShouldReset();
         }
 
-        private void FailedCounterShouldReset()
-        {
-            _failedCounter.Received(1).Reset(DefaultAccountId);
-        }
-
-        protected virtual void WhenValid()
-        {
-            GivenPasswordFromDB(DefaultAccountId, "my hashed password");
-            GivenHashedPassword("1234", "my hashed password");
-            GivenOtp(DefaultAccountId, "123456");
-
-            var isValid = _authenticationService.Verify(DefaultAccountId, "1234", "123456");
-        }
-
         [Test]
         public void is_invalid()
         {
-            GivenPasswordFromDB(DefaultAccountId, "my hashed password");
-            GivenHashedPassword("1234", "my hashed password");
-            GivenOtp(DefaultAccountId, "123456");
-
+            WhenInvalid();
             ShouldBeInvalid(DefaultAccountId, "1234", "wrong otp");
         }
 
@@ -96,6 +76,19 @@ namespace DependencyInjectionWorkshopTests
             ShouldThrow<FailedTooManyTimesException>();
         }
 
+        private void FailedCounterShouldReset()
+        {
+            _failedCounter.Received(1).Reset(DefaultAccountId);
+        }
+
+        protected virtual void WhenValid()
+        {
+            GivenPasswordFromDB(DefaultAccountId, "my hashed password");
+            GivenHashedPassword("1234", "my hashed password");
+            GivenOtp(DefaultAccountId, "123456");
+
+            var isValid = _authenticationService.Verify(DefaultAccountId, "1234", "123456");
+        }
 
         private void ShouldThrow<TException>() where TException : Exception
         {
