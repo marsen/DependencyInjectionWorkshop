@@ -24,7 +24,8 @@ namespace DependencyInjectionWorkshopTests
             _logger = Substitute.For<ILogger>();
             _notification = Substitute.For<INotification>();
             _failedCounter = Substitute.For<IFailedCounter>();
-            _authenticationService = new AuthenticationService(_profile, _hash, _notification, _failedCounter, _otpService, _logger);
+            _authenticationService =
+                new AuthenticationService(_profile, _hash, _notification, _failedCounter, _otpService, _logger);
         }
 
         [Test]
@@ -35,6 +36,18 @@ namespace DependencyInjectionWorkshopTests
             GivenOtp("joey", "123456");
 
             ShouldBeValid("joey", "1234", "123456");
+        }
+
+        [Test]
+        public void is_invalid()
+        {
+            GivenPasswordFromDB("joey", "my hashed password");
+            GivenHashedPassword("1234", "my hashed password");
+            GivenOtp("joey", "wrong otp");
+
+            var isValid = _authenticationService.Verify("joey", "1234", "123456");
+
+            Assert.IsFalse(isValid);
         }
 
         private void ShouldBeValid(string accountId, string password, string otp)
