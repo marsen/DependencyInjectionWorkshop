@@ -8,11 +8,11 @@ namespace DependencyInjectionWorkshop.Models
         private readonly IProfile _profile;
         private readonly IHash _hash;
         private readonly INotification _notification;
-        private readonly IFailCounter _failedCounter;
+        private readonly IFailedCounter _failedCounter;
         private readonly IOtpService _otpService;
-        private readonly ILog _logger;
+        private readonly ILogger _logger;
 
-        public AuthenticationService(IProfile profile, IHash hash, INotification notification, IFailCounter failedCounter, IOtpService otpService, ILog logger)
+        public AuthenticationService(IProfile profile, IHash hash, INotification notification, IFailedCounter failedCounter, IOtpService otpService, ILogger logger)
         {
             _profile = profile;
             _hash = hash;
@@ -27,9 +27,9 @@ namespace DependencyInjectionWorkshop.Models
             _profile = new ProfileDao();
             _hash = new Sha256Adapter();
             _notification = new SlackAdapter();
-            _failedCounter = new FailCounter();
+            _failedCounter = new FailedCounter();
             _otpService = new OtpService();
-            _logger = new NLogAdapter();
+            _logger = new NLoggerAdapter();
         }
 
         /// <summary>

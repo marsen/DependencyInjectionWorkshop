@@ -3,7 +3,7 @@ using System.Net.Http;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public interface IFailCounter
+    public interface IFailedCounter
     {
         /// <summary>
         /// Determines whether the specified account identifier is locked.
@@ -16,9 +16,9 @@ namespace DependencyInjectionWorkshop.Models
         int Get(string accountId);
     }
 
-    public class FailCounter : IFailCounter
+    public class FailedCounter : IFailedCounter
     {
-        public FailCounter()
+        public FailedCounter()
         {
         }
 
