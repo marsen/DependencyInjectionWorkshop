@@ -13,10 +13,10 @@ namespace DependencyInjectionWorkshop.Models
         public bool Verify(string accountId, string password, string otp)
         {
 
-            string userPassword;
+            string passwordFromDb;
             using (var connection = new SqlConnection("my connection string"))
             {
-                userPassword = connection.Query<string>("spGetUserPassword", new {Id = accountId},
+                passwordFromDb = connection.Query<string>("spGetUserPassword", new {Id = accountId},
                     commandType: CommandType.StoredProcedure).SingleOrDefault();
 
             }
@@ -33,16 +33,20 @@ namespace DependencyInjectionWorkshop.Models
 
             var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
             var response = httpClient.PostAsJsonAsync("api/otps", accountId).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                var currentOtp = response.Content.ReadAsAsync<string>().Result;
-                return currentOtp == otp && hashedPassword == userPassword;
-            }
-            else
+            if (!response.IsSuccessStatusCode)
             {
                 throw new Exception($"web api error, accountId:{accountId}");
             }
 
+            var currentOtp = response.Content.ReadAsAsync<string>().Result;
+            if (currentOtp == otp && hashedPassword == passwordFromDb)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
