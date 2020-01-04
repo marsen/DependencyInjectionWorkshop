@@ -49,7 +49,9 @@ namespace DependencyInjectionWorkshop.Models
             }
             else
             {
-                Notify($"account:{accountId} try to login failed");
+                string message = $"account:{accountId} try to login failed";
+                var slackClient = new SlackClient("my api token");
+                slackClient.PostMessage(response1 => { }, "my channel", message, "my bot name");
                 return false;
             }
         }
