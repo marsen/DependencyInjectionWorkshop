@@ -8,7 +8,8 @@ namespace DependencyInjectionWorkshop.Models
         /// Notifies the specified account identifier.
         /// </summary>
         /// <param name="accountId">The account identifier.</param>
-        void Notify(string accountId);
+        /// <param name="message"></param>
+        void Notify(string accountId, string message);
     }
 
     public class SlackAdapter : INotification
@@ -21,10 +22,10 @@ namespace DependencyInjectionWorkshop.Models
         /// Notifies the specified account identifier.
         /// </summary>
         /// <param name="accountId">The account identifier.</param>
-        public void Notify(string accountId)
+        /// <param name="message"></param>
+        public void Notify(string accountId, string message)
         {
             //notify
-            var message = $"account:{accountId} try to login failed";
             var slackClient = new SlackClient("my api token");
             slackClient.PostMessage(messageResponse => { }, "my channel", message, "my bot name");
         }

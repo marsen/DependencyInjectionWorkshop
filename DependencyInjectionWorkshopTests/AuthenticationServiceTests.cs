@@ -1,4 +1,5 @@
-﻿using DependencyInjectionWorkshop.Models;
+﻿using System;
+using DependencyInjectionWorkshop.Models;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -78,6 +79,39 @@ namespace DependencyInjectionWorkshopTests
             WhenInvalid();
 
             this._logger.Received(1).Info(Arg.Is<string>(x => x.Contains(DefaultFailedCount.ToString())));
+        }
+
+
+        [Test]
+        public void notify_user_when_invalid()
+        {
+            WhenInvalid();
+            ShouldNotify(DefaultAccountId);
+        }
+
+        [Test]
+        public void account_is_locked()
+        {
+            GivenAccountIsLocked(true);
+            ShouldThrow<FailedTooManyTimesException>();
+        }
+
+
+        private void ShouldThrow<TException>() where TException : Exception
+        {
+            TestDelegate action = () => _authenticationService.Verify(DefaultAccountId, "1234", "123456");
+            Assert.Throws<TException>(action);
+        }
+
+
+        private void GivenAccountIsLocked(bool isLocked)
+        {
+            _failedCounter.IsLocked(DefaultAccountId).Returns(isLocked);
+        }
+
+        private void ShouldNotify(string accountId)
+        {
+            _notification.Received(1).Notify(accountId, Arg.Is<string>(s => s.Contains(accountId)));
         }
 
         private bool WhenInvalid()
