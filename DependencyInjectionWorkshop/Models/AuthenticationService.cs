@@ -3,6 +3,22 @@ using System.Net.Http;
 
 namespace DependencyInjectionWorkshop.Models
 {
+    public class NotificationDecorator
+    {
+        private AuthenticationService _authenticationService;
+        private INotification _notification;
+
+        public NotificationDecorator(AuthenticationService authenticationService, INotification notification)
+        {
+            _authenticationService = authenticationService;
+        }
+
+        private void Notify(string accountId)
+        {
+            _notification.Notify(accountId, $"account:{accountId} try to login failed");
+        }
+    }
+
     public class AuthenticationService : IAuthentication
     {
         private readonly IProfile _profile;
@@ -11,10 +27,12 @@ namespace DependencyInjectionWorkshop.Models
         private readonly IFailedCounter _failedCounter;
         private readonly IOtpService _otpService;
         private readonly ILogger _logger;
+        private readonly NotificationDecorator _notificationDecorator;
 
         public AuthenticationService(IProfile profile, IHash hash, INotification notification,
             IFailedCounter failedCounter, IOtpService otpService, ILogger logger)
         {
+            //_notificationDecorator = new NotificationDecorator(this);
             _profile = profile;
             _hash = hash;
             _notification = notification;
@@ -25,6 +43,7 @@ namespace DependencyInjectionWorkshop.Models
 
         public AuthenticationService()
         {
+            //_notificationDecorator = new NotificationDecorator(this);
             _profile = new ProfileDao();
             _hash = new Sha256Adapter();
             _notification = new SlackAdapter();
@@ -66,14 +85,9 @@ namespace DependencyInjectionWorkshop.Models
 
                 var failedCount = _failedCounter.Get(accountId);
                 _logger.Info($"accountId:{accountId} failed times:{failedCount}");
-                Notify(accountId);
+                //            _notificationDecorator.Notify(accountId);
                 return false;
             }
-        }
-
-        private void Notify(string accountId)
-        {
-            _notification.Notify(accountId, $"account:{accountId} try to login failed");
         }
     }
 }
