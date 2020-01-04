@@ -7,18 +7,18 @@ namespace DependencyInjectionWorkshop.Models
     {
         private readonly IProfile _profile;
         private readonly IHash _hash;
-        private readonly INotify _slackAdapter;
-        private readonly FailCounter _failCounter;
-        private readonly OtpAdapter _otpAdapter;
-        private readonly NLogAdapter _nLogAdapter;
+        private readonly INotification _notification;
+        private readonly IFailCounter _failCounter;
+        private readonly IOtpService _otpService;
+        private readonly ILog _nLogAdapter;
 
-        public AuthenticationService(IProfile profile, IHash hash, INotify slackAdapter, FailCounter failCounter, OtpAdapter otpAdapter, NLogAdapter nLogAdapter)
+        public AuthenticationService(IProfile profile, IHash hash, INotification notification, IFailCounter failCounter, IOtpService otpService, ILog nLogAdapter)
         {
             _profile = profile;
             _hash = hash;
-            _slackAdapter = slackAdapter;
+            _notification = notification;
             _failCounter = failCounter;
-            _otpAdapter = otpAdapter;
+            _otpService = otpService;
             _nLogAdapter = nLogAdapter;
         }
 
@@ -26,9 +26,9 @@ namespace DependencyInjectionWorkshop.Models
         {
             _profile = new ProfileDao();
             _hash = new Sha256Adapter();
-            _slackAdapter = new SlackAdapter();
+            _notification = new SlackAdapter();
             _failCounter = new FailCounter();
-            _otpAdapter = new OtpAdapter();
+            _otpService = new OtpService();
             _nLogAdapter = new NLogAdapter();
         }
 
@@ -52,7 +52,7 @@ namespace DependencyInjectionWorkshop.Models
 
             var hashedPassword = _hash.ComputeHash(password);
 
-            var currentOtp = _otpAdapter.GetOtp(accountId);
+            var currentOtp = _otpService.GetOtp(accountId);
 
             if (currentOtp == otp && hashedPassword == passwordFromDb)
             {
@@ -65,7 +65,7 @@ namespace DependencyInjectionWorkshop.Models
 
                 var failedCount = _failCounter.Get(accountId);
                 _nLogAdapter.Info(accountId, failedCount);
-                _slackAdapter.Notify(accountId);
+                _notification.Notify(accountId);
                     return false;
             }
         }

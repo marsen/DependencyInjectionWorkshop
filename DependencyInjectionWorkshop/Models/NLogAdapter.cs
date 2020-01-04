@@ -1,6 +1,11 @@
 ﻿namespace DependencyInjectionWorkshop.Models
 {
-    public class NLogAdapter
+    public interface ILog
+    {
+        void Info(string accountId, int failedCount);
+    }
+
+    public class NLogAdapter : ILog
     {
         public NLogAdapter()
         {

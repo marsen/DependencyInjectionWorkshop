@@ -3,9 +3,14 @@ using System.Net.Http;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public class OtpAdapter
+    public interface IOtpService
     {
-        public OtpAdapter()
+        string GetOtp(string accountId);
+    }
+
+    public class OtpService : IOtpService
+    {
+        public OtpService()
         {
         }
 
