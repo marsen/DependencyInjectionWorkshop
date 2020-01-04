@@ -31,13 +31,18 @@ namespace DependencyInjectionWorkshopTests
         [Test]
         public void is_valid()
         {
-            _profile.Password("joey").Returns("my hashed password");
+            GivenPasswordFromDB("joey", "my hashed password");
             _hash.ComputeHash("1234").Returns("my hashed password");
             _otpService.GetOtp("joey").Returns("123456");
 
             var isValid = _authenticationService.Verify("joey", "1234", "123456");
 
             Assert.IsTrue(isValid);
+        }
+
+        private void GivenPasswordFromDB(string accountId, string hashedPasswordFromDb)
+        {
+            _profile.Password(accountId).Returns(hashedPasswordFromDb);
         }
     }
 }
