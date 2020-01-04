@@ -12,7 +12,8 @@ namespace DependencyInjectionWorkshop.Models
         private readonly IOtpService _otpService;
         private readonly ILogger _logger;
 
-        public AuthenticationService(IProfile profile, IHash hash, INotification notification, IFailedCounter failedCounter, IOtpService otpService, ILogger logger)
+        public AuthenticationService(IProfile profile, IHash hash, INotification notification,
+            IFailedCounter failedCounter, IOtpService otpService, ILogger logger)
         {
             _profile = profile;
             _hash = hash;
@@ -45,7 +46,7 @@ namespace DependencyInjectionWorkshop.Models
             var isLocked = _failedCounter.IsLocked(accountId);
             if (isLocked)
             {
-                throw new FailedTooManyTimesException(){AccountId = accountId};
+                throw new FailedTooManyTimesException() {AccountId = accountId};
             }
 
             var passwordFromDb = _profile.Password(accountId);
@@ -64,9 +65,9 @@ namespace DependencyInjectionWorkshop.Models
                 _failedCounter.Add(accountId);
 
                 var failedCount = _failedCounter.Get(accountId);
-                _logger.Info(accountId, failedCount);
+                _logger.Info($"accountId:{accountId} failed times:{failedCount}");
                 _notification.Notify(accountId);
-                    return false;
+                return false;
             }
         }
     }

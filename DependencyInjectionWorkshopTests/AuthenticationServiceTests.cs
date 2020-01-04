@@ -15,6 +15,7 @@ namespace DependencyInjectionWorkshopTests
         private IFailedCounter _failedCounter;
         private AuthenticationService _authenticationService;
         private const string DefaultAccountId = "joey";
+        private const int DefaultFailedCount = 91;
 
         [SetUp]
         public void Setup()
@@ -68,6 +69,30 @@ namespace DependencyInjectionWorkshopTests
             GivenOtp(DefaultAccountId, "123456");
 
             ShouldBeInvalid(DefaultAccountId, "1234", "wrong otp");
+        }
+
+        [Test]
+        public void log_when_invalid()
+        {
+            GivenFailedCount(DefaultFailedCount);
+            WhenInvalid();
+
+            this._logger.Received(1).Info(Arg.Is<string>(x => x.Contains(DefaultFailedCount.ToString())));
+        }
+
+        private bool WhenInvalid()
+        {
+            GivenPasswordFromDB(DefaultAccountId, "my hashed password");
+            GivenHashedPassword("1234", "my hashed password");
+            GivenOtp(DefaultAccountId, "123456");
+
+            var isValid = _authenticationService.Verify(DefaultAccountId, "1234", "wrong otp");
+            return isValid;
+        }
+
+        private void GivenFailedCount(int failedCount)
+        {
+            this._failedCounter.Get(DefaultAccountId).Returns(failedCount);
         }
 
         private void ShouldBeInvalid(string accountId, string password, string otp)
