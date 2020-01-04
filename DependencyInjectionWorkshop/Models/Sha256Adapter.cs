@@ -18,11 +18,6 @@ namespace DependencyInjectionWorkshop.Models
         {
         }
 
-        /// <summary>
-        /// Hasheds the password.
-        /// </summary>
-        /// <param name="password">The password.</param>
-        /// <returns></returns>
         public string ComputeHash(string password)
         {
             var crypt = new System.Security.Cryptography.SHA256Managed();

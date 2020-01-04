@@ -6,16 +6,16 @@ namespace DependencyInjectionWorkshop.Models
     public class AuthenticationService
     {
         private readonly ProfileDao _profileDao;
-        private readonly Sha256Adapter _sha256Adapter;
+        private readonly IHash _hash;
         private readonly SlackAdapter _slackAdapter;
         private readonly FailCounter _failCounter;
         private readonly OtpAdapter _otpAdapter;
         private readonly NLogAdapter _nLogAdapter;
 
-        public AuthenticationService(ProfileDao profileDao, Sha256Adapter sha256Adapter, SlackAdapter slackAdapter, FailCounter failCounter, OtpAdapter otpAdapter, NLogAdapter nLogAdapter)
+        public AuthenticationService(ProfileDao profileDao, IHash hash, SlackAdapter slackAdapter, FailCounter failCounter, OtpAdapter otpAdapter, NLogAdapter nLogAdapter)
         {
             _profileDao = profileDao;
-            _sha256Adapter = sha256Adapter;
+            _hash = hash;
             _slackAdapter = slackAdapter;
             _failCounter = failCounter;
             _otpAdapter = otpAdapter;
@@ -25,7 +25,7 @@ namespace DependencyInjectionWorkshop.Models
         public AuthenticationService()
         {
             _profileDao = new ProfileDao();
-            _sha256Adapter = new Sha256Adapter();
+            _hash = new Sha256Adapter();
             _slackAdapter = new SlackAdapter();
             _failCounter = new FailCounter();
             _otpAdapter = new OtpAdapter();
@@ -50,7 +50,7 @@ namespace DependencyInjectionWorkshop.Models
 
             var passwordFromDb = _profileDao.Password(accountId);
 
-            var hashedPassword = _sha256Adapter.ComputeHash(password);
+            var hashedPassword = _hash.ComputeHash(password);
 
             var currentOtp = _otpAdapter.GetOtp(accountId);
 
