@@ -32,12 +32,22 @@ namespace DependencyInjectionWorkshopTests
         public void is_valid()
         {
             GivenPasswordFromDB("joey", "my hashed password");
-            _hash.ComputeHash("1234").Returns("my hashed password");
-            _otpService.GetOtp("joey").Returns("123456");
+            GivenHashedPassword("1234", "my hashed password");
+            GivenOtp("joey", "123456");
 
             var isValid = _authenticationService.Verify("joey", "1234", "123456");
 
             Assert.IsTrue(isValid);
+        }
+
+        private void GivenOtp(string accountId, string otp)
+        {
+            _otpService.GetOtp(accountId).Returns(otp);
+        }
+
+        private void GivenHashedPassword(string password, string hashedPassword)
+        {
+            _hash.ComputeHash(password).Returns(hashedPassword);
         }
 
         private void GivenPasswordFromDB(string accountId, string hashedPasswordFromDb)
