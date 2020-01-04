@@ -13,9 +13,6 @@ namespace DependencyInjectionWorkshop.Models
         /// Determines whether the specified account identifier is locked.
         /// </summary>
         /// <param name="accountId">The account identifier.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified account identifier is locked; otherwise, <c>false</c>.
-        /// </returns>
         public bool IsLocked(string accountId)
         {
             var isLockedResponse = new HttpClient() { BaseAddress = new Uri("http://joey.com/") }.PostAsJsonAsync("api/failedCounter/IsLocked", accountId).Result;

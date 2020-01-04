@@ -42,7 +42,7 @@ namespace DependencyInjectionWorkshop.Models
 
             var hashedPassword = _sha256Adapter.HashedPassword(password);
 
-            var currentOtp = _otpAdapter.GetOtp(accountId, new HttpClient() { BaseAddress = new Uri("http://joey.com/") });
+            var currentOtp = _otpAdapter.GetOtp(accountId);
 
             if (currentOtp == otp && hashedPassword == passwordFromDb)
             {
