@@ -29,5 +29,17 @@ namespace DependencyInjectionWorkshop.Models
 
             addFailedCountResponse.EnsureSuccessStatusCode();
         }
+
+        public int Get(string accountId, HttpClient httpClient)
+        {
+            // failed log 
+            var failedCountResponse =
+                httpClient.PostAsJsonAsync("api/failedCounter/GetFailedCount", accountId).Result;
+
+            failedCountResponse.EnsureSuccessStatusCode();
+
+            var failedCount = failedCountResponse.Content.ReadAsAsync<int>().Result;
+            return failedCount;
+        }
     }
 }

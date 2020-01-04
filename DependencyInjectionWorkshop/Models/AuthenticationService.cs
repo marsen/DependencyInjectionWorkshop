@@ -10,6 +10,7 @@ namespace DependencyInjectionWorkshop.Models
         private readonly SlackAdapter _slackAdapter;
         private readonly FailCounter _failCounter;
         private readonly OtpAdapter _otpAdapter;
+        private readonly NLogAdapter _nLogAdapter;
 
         public AuthenticationService()
         {
@@ -18,6 +19,7 @@ namespace DependencyInjectionWorkshop.Models
             _slackAdapter = new SlackAdapter();
             _failCounter = new FailCounter();
             _otpAdapter = new OtpAdapter();
+            _nLogAdapter = new NLogAdapter();
         }
 
         /// <summary>
@@ -58,23 +60,11 @@ namespace DependencyInjectionWorkshop.Models
             {
                 _failCounter.Add(accountId, httpClient);
 
-                LogFailedCount(accountId, httpClient);
+                var failedCount = _failCounter.Get(accountId, httpClient);
+                _nLogAdapter.Info(accountId, failedCount);
                 _slackAdapter.Notify(accountId);
                 return false;
             }
-        }
-
-        private void LogFailedCount(string accountId, HttpClient httpClient)
-        {
-            // failed log 
-            var failedCountResponse =
-                httpClient.PostAsJsonAsync("api/failedCounter/GetFailedCount", accountId).Result;
-
-            failedCountResponse.EnsureSuccessStatusCode();
-
-            var failedCount = failedCountResponse.Content.ReadAsAsync<int>().Result;
-            var logger = NLog.LogManager.GetCurrentClassLogger();
-            logger.Info($"accountId:{accountId} failed times:{failedCount}");
         }
     }
 
