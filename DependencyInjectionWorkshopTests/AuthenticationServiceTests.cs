@@ -58,7 +58,12 @@ namespace DependencyInjectionWorkshopTests
             GivenFailedCount(DefaultFailedCount);
             WhenInvalid();
 
-            this._logger.Received(1).Info(Arg.Is<string>(x => x.Contains(DefaultFailedCount.ToString())));
+            ShouldLog(DefaultFailedCount);
+        }
+
+        private void ShouldLog(int defaultFailedCount)
+        {
+            this._logger.Received(1).Info(Arg.Is<string>(x => x.Contains(defaultFailedCount.ToString())));
         }
 
 
