@@ -8,7 +8,7 @@ namespace DependencyInjectionWorkshop.Models
     public interface IProfile
     {
         /// <summary>
-        /// Passwords from database.
+        /// Passwords the specified account identifier.
         /// </summary>
         /// <param name="accountId">The account identifier.</param>
         /// <returns></returns>
@@ -22,7 +22,7 @@ namespace DependencyInjectionWorkshop.Models
         }
 
         /// <summary>
-        /// Passwords from database.
+        /// Passwords the specified account identifier.
         /// </summary>
         /// <param name="accountId">The account identifier.</param>
         /// <returns></returns>
