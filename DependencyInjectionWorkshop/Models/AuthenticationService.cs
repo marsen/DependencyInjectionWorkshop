@@ -9,8 +9,47 @@ using SlackAPI;
 
 namespace DependencyInjectionWorkshop.Models
 {
+    public class ProfileDao
+    {
+        public ProfileDao()
+        {
+        }
+
+        /// <summary>
+        /// Passwords from database.
+        /// </summary>
+        /// <param name="accountId">The account identifier.</param>
+        /// <returns></returns>
+        private string PasswordFromDb(string accountId)
+        {
+            string passwordFromDb;
+            using (var connection = new SqlConnection("my connection string"))
+            {
+                passwordFromDb = connection.Query<string>("spGetUserPassword", new {Id = accountId},
+                    commandType: CommandType.StoredProcedure).SingleOrDefault();
+            }
+
+            return passwordFromDb;
+        }
+    }
+
     public class AuthenticationService
     {
+        private readonly ProfileDao _profileDao;
+
+        public AuthenticationService()
+        {
+            _profileDao = new ProfileDao();
+        }
+
+        /// <summary>
+        /// Verifies the specified account identifier.
+        /// </summary>
+        /// <param name="accountId">The account identifier.</param>
+        /// <param name="password">The password.</param>
+        /// <param name="otp">The otp.</param>
+        /// <returns></returns>
+        /// <exception cref="DependencyInjectionWorkshop.Models.FailedTooManyTimesException"></exception>
         public bool Verify(string accountId, string password, string otp)
         {
             var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
@@ -22,7 +61,7 @@ namespace DependencyInjectionWorkshop.Models
                 throw new FailedTooManyTimesException(){AccountId = accountId};
             }
             //// get password
-            var passwordFromDb = PasswordFromDb(accountId);
+            var passwordFromDb = _profileDao.PasswordFromDb(accountId);
 
             //// get hash
             var hashedPassword = HashedPassword(password);
@@ -111,18 +150,6 @@ namespace DependencyInjectionWorkshop.Models
 
             var hashedPassword = hash.ToString();
             return hashedPassword;
-        }
-
-        private static string PasswordFromDb(string accountId)
-        {
-            string passwordFromDb;
-            using (var connection = new SqlConnection("my connection string"))
-            {
-                passwordFromDb = connection.Query<string>("spGetUserPassword", new {Id = accountId},
-                    commandType: CommandType.StoredProcedure).SingleOrDefault();
-            }
-
-            return passwordFromDb;
         }
 
         private static bool AccountIsLocked(string accountId, HttpClient httpClient)
