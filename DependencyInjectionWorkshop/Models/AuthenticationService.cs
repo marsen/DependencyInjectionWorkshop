@@ -16,8 +16,8 @@ namespace DependencyInjectionWorkshop.Models
             var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
             
             //check account locked
-            var IsLocked = AccountIsLocked(accountId, httpClient);
-            if (IsLocked)
+            var isLocked = AccountIsLocked(accountId, httpClient);
+            if (isLocked)
             {
                 throw new FailedTooManyTimesException(){AccountId = accountId};
             }
@@ -48,6 +48,10 @@ namespace DependencyInjectionWorkshop.Models
             }
         }
 
+        /// <summary>
+        /// Notifies the specified account identifier.
+        /// </summary>
+        /// <param name="accountId">The account identifier.</param>
         private static void Notify(string accountId)
         {
             //notify
