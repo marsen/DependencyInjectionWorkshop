@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using DependencyInjectionWorkshop.Models.Decorator;
 
 namespace DependencyInjectionWorkshop.Models
 {
@@ -30,6 +31,11 @@ namespace DependencyInjectionWorkshop.Models
             _logger = new NLoggerAdapter();
         }
 
+        public IFailedCounter FailedCounter
+        {
+            get { return _failedCounter; }
+        }
+
         /// <summary>
         /// Verifies the specified account identifier.
         /// </summary>
@@ -40,12 +46,6 @@ namespace DependencyInjectionWorkshop.Models
         /// <exception cref="DependencyInjectionWorkshop.Models.FailedTooManyTimesException"></exception>
         public bool Verify(string accountId, string password, string otp)
         {
-            var isLocked = _failedCounter.IsLocked(accountId);
-            if (isLocked)
-            {
-                throw new FailedTooManyTimesException() {AccountId = accountId};
-            }
-
             var passwordFromDb = _profile.Password(accountId);
 
             var hashedPassword = _hash.ComputeHash(password);
@@ -63,5 +63,7 @@ namespace DependencyInjectionWorkshop.Models
                 return false;
             }
         }
+
+        private FailedCounterDecorator a;
     }
 }
