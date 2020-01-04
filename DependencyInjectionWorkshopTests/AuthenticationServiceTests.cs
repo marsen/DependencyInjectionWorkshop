@@ -63,11 +63,13 @@ namespace DependencyInjectionWorkshopTests
             ShouldLog(DefaultFailedCount);
         }
 
-        private void ShouldLog(int defaultFailedCount)
+        [Test]
+        public void failed_counter_add_when_invalid()
         {
-            this._logger.Received(1).Info(Arg.Is<string>(x => x.Contains(defaultFailedCount.ToString())));
-        }
+            WhenInvalid();
 
+            this._failedCounter.Received(1).Add(DefaultAccountId);
+        }
 
         [Test]
         public void notify_user_when_invalid()
@@ -81,6 +83,11 @@ namespace DependencyInjectionWorkshopTests
         {
             GivenAccountIsLocked(true);
             ShouldThrow<FailedTooManyTimesException>();
+        }
+
+        private void ShouldLog(int defaultFailedCount)
+        {
+            this._logger.Received(1).Info(Arg.Is<string>(x => x.Contains(defaultFailedCount.ToString())));
         }
 
         private void FailedCounterShouldReset()
