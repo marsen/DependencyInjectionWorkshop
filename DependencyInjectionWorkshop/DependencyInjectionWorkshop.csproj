@@ -75,13 +75,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Decorator\AuthenticationDecoratorBase.cs" />
     <Compile Include="Models\AuthenticationService.cs" />
     <Compile Include="Models\FailCounter.cs" />
-    <Compile Include="Models\FailedCounterDecorator.cs" />
+    <Compile Include="Models\Decorator\FailedCounterDecorator.cs" />
     <Compile Include="Models\FailedTooManyTimesException.cs" />
     <Compile Include="Models\IAuthentication.cs" />
     <Compile Include="Models\NLogAdapter.cs" />
-    <Compile Include="Models\NotificationDecorator.cs" />
+    <Compile Include="Models\Decorator\NotificationDecorator.cs" />
     <Compile Include="Models\OtpAdapter.cs" />
     <Compile Include="Models\ProfileDao.cs" />
     <Compile Include="Models\Sha256Adapter.cs" />
@@ -92,5 +93,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

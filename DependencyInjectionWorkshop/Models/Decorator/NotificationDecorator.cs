@@ -1,4 +1,4 @@
-﻿namespace DependencyInjectionWorkshop.Models
+﻿namespace DependencyInjectionWorkshop.Models.Decorator
 {
     public class NotificationDecorator : AuthenticationDecoratorBase
     {

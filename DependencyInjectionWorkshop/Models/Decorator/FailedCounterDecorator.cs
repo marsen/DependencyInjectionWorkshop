@@ -1,4 +1,4 @@
-﻿namespace DependencyInjectionWorkshop.Models
+﻿namespace DependencyInjectionWorkshop.Models.Decorator
 {
     public class FailedCounterDecorator : AuthenticationDecoratorBase
     {
@@ -33,21 +33,6 @@
         public void Add(string accountId)
         {
             _failedCounter.Add(accountId);
-        }
-    }
-
-    public class AuthenticationDecoratorBase : IAuthentication
-    {
-        private readonly IAuthentication _authenticationService;
-
-        public AuthenticationDecoratorBase(IAuthentication authenticationService)
-        {
-            _authenticationService = authenticationService;
-        }
-
-        public virtual bool Verify(string accountId, string password, string otp)
-        {
-            return _authenticationService.Verify(accountId, password, otp);
         }
     }
 }
