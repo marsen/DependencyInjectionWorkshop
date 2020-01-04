@@ -40,6 +40,17 @@ namespace DependencyInjectionWorkshopTests
         }
 
         [Test]
+        public void reset_failed_counter_when_is_valid()
+        {
+            GivenPasswordFromDB(DefaultAccountId, "my hashed password");
+            GivenHashedPassword("1234", "my hashed password");
+            GivenOtp(DefaultAccountId, "123456");
+
+            var isValid = _authenticationService.Verify(DefaultAccountId, "1234", "123456");
+            _failedCounter.Received(1).Reset(DefaultAccountId);
+        }
+
+        [Test]
         public void is_invalid()
         {
             GivenPasswordFromDB(DefaultAccountId, "my hashed password");
