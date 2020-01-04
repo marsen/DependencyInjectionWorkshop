@@ -7,12 +7,12 @@ namespace DependencyInjectionWorkshop.Models
     {
         private readonly IProfile _profile;
         private readonly IHash _hash;
-        private readonly SlackAdapter _slackAdapter;
+        private readonly INotify _slackAdapter;
         private readonly FailCounter _failCounter;
         private readonly OtpAdapter _otpAdapter;
         private readonly NLogAdapter _nLogAdapter;
 
-        public AuthenticationService(IProfile profile, IHash hash, SlackAdapter slackAdapter, FailCounter failCounter, OtpAdapter otpAdapter, NLogAdapter nLogAdapter)
+        public AuthenticationService(IProfile profile, IHash hash, INotify slackAdapter, FailCounter failCounter, OtpAdapter otpAdapter, NLogAdapter nLogAdapter)
         {
             _profile = profile;
             _hash = hash;
