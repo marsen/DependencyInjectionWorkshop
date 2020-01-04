@@ -46,7 +46,7 @@ namespace DependencyInjectionWorkshop.Models
 
             if (currentOtp == otp && hashedPassword == passwordFromDb)
             {
-                _failCounter.Reset(accountId, new HttpClient() { BaseAddress = new Uri("http://joey.com/") });
+                _failCounter.Reset(accountId);
                 return true;
             }
             else

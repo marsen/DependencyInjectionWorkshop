@@ -21,9 +21,9 @@ namespace DependencyInjectionWorkshop.Models
             return IsLocked;
         }
 
-        public void Reset(string accountId, HttpClient httpClient)
+        public void Reset(string accountId)
         {
-            var resetResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
+            var resetResponse = new HttpClient() { BaseAddress = new Uri("http://joey.com/") }.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
             resetResponse.EnsureSuccessStatusCode();
         }
 
