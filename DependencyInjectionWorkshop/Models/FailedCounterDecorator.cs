@@ -1,13 +1,12 @@
 ﻿namespace DependencyInjectionWorkshop.Models
 {
-    public class FailedCounterDecorator:IAuthentication
+    public class FailedCounterDecorator : AuthenticationDecoratorBase
     {
-        private readonly IAuthentication _authenticationService;
         private readonly IFailedCounter _failedCounter;
 
-        public FailedCounterDecorator(IAuthentication authenticationService,IFailedCounter failedCounter)
+        public FailedCounterDecorator(IAuthentication authenticationService, IFailedCounter failedCounter) : base(
+            authenticationService)
         {
-            _authenticationService = authenticationService;
             _failedCounter = failedCounter;
         }
 
@@ -16,15 +15,30 @@
             _failedCounter.Reset(accountId);
         }
 
-        public bool Verify(string accountId, string password, string otp)
+        public override bool Verify(string accountId, string password, string otp)
         {
-            var verify = this._authenticationService.Verify(accountId,password,otp);
+            var verify = base.Verify(accountId, password, otp);
             if (verify)
             {
                 Reset(accountId);
             }
 
             return verify;
+        }
+    }
+
+    public class AuthenticationDecoratorBase : IAuthentication
+    {
+        private readonly IAuthentication _authenticationService;
+
+        public AuthenticationDecoratorBase(IAuthentication authenticationService)
+        {
+            _authenticationService = authenticationService;
+        }
+
+        public virtual bool Verify(string accountId, string password, string otp)
+        {
+            return _authenticationService.Verify(accountId, password, otp);
         }
     }
 }
