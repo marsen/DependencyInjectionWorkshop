@@ -27,19 +27,19 @@ namespace DependencyInjectionWorkshop.Models
             resetResponse.EnsureSuccessStatusCode();
         }
 
-        public void Add(string accountId, HttpClient httpClient)
+        public void Add(string accountId)
         {
             //失敗
-            var addFailedCountResponse = httpClient.PostAsJsonAsync("api/failedCounter/Add", accountId).Result;
+            var addFailedCountResponse = new HttpClient() { BaseAddress = new Uri("http://joey.com/") }.PostAsJsonAsync("api/failedCounter/Add", accountId).Result;
 
             addFailedCountResponse.EnsureSuccessStatusCode();
         }
 
-        public int Get(string accountId, HttpClient httpClient)
+        public int Get(string accountId)
         {
             // failed log 
             var failedCountResponse =
-                httpClient.PostAsJsonAsync("api/failedCounter/GetFailedCount", accountId).Result;
+                new HttpClient() { BaseAddress = new Uri("http://joey.com/") }.PostAsJsonAsync("api/failedCounter/GetFailedCount", accountId).Result;
 
             failedCountResponse.EnsureSuccessStatusCode();
 

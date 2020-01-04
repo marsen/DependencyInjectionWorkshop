@@ -51,9 +51,9 @@ namespace DependencyInjectionWorkshop.Models
             }
             else
             {
-                _failCounter.Add(accountId, new HttpClient() { BaseAddress = new Uri("http://joey.com/") });
+                _failCounter.Add(accountId);
 
-                var failedCount = _failCounter.Get(accountId, new HttpClient() { BaseAddress = new Uri("http://joey.com/") });
+                var failedCount = _failCounter.Get(accountId);
                 _nLogAdapter.Info(accountId, failedCount);
                 _slackAdapter.Notify(accountId);
                     return false;
