@@ -1,6 +1,6 @@
 ﻿namespace DependencyInjectionWorkshop.Models
 {
-    public class NotificationDecorator:IAuthentication
+    public class NotificationDecorator : IAuthentication
     {
         private INotification _notification;
         private IAuthentication _authenticationService;
@@ -17,7 +17,13 @@
 
         public bool Verify(string accountId, string password, string otp)
         {
-            throw new System.NotImplementedException();
+            var isValid = _authenticationService.Verify(accountId, password, otp);
+            if (!isValid)
+            {
+                Notify(accountId);
+            }
+
+            return isValid;
         }
     }
 }
