@@ -14,6 +14,7 @@ namespace DependencyInjectionWorkshopTests
         private INotification _notification;
         private IFailedCounter _failedCounter;
         private AuthenticationService _authenticationService;
+        private const string DefaultAccountId = "joey";
 
         [SetUp]
         public void Setup()
@@ -31,21 +32,21 @@ namespace DependencyInjectionWorkshopTests
         [Test]
         public void is_valid()
         {
-            GivenPasswordFromDB("joey", "my hashed password");
+            GivenPasswordFromDB(DefaultAccountId, "my hashed password");
             GivenHashedPassword("1234", "my hashed password");
-            GivenOtp("joey", "123456");
+            GivenOtp(DefaultAccountId, "123456");
 
-            ShouldBeValid("joey", "1234", "123456");
+            ShouldBeValid(DefaultAccountId, "1234", "123456");
         }
 
         [Test]
         public void is_invalid()
         {
-            GivenPasswordFromDB("joey", "my hashed password");
+            GivenPasswordFromDB(DefaultAccountId, "my hashed password");
             GivenHashedPassword("1234", "my hashed password");
-            GivenOtp("joey", "123456");
+            GivenOtp(DefaultAccountId, "123456");
 
-            ShouldBeInvalid("joey", "1234", "wrong otp");
+            ShouldBeInvalid(DefaultAccountId, "1234", "wrong otp");
         }
 
         private void ShouldBeInvalid(string accountId, string password, string otp)
