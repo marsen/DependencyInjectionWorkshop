@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 
 namespace DependencyInjectionWorkshop.Models
 {
@@ -8,9 +9,16 @@ namespace DependencyInjectionWorkshop.Models
         {
         }
 
-        public bool IsLocked(string accountId, HttpClient httpClient)
+        /// <summary>
+        /// Determines whether the specified account identifier is locked.
+        /// </summary>
+        /// <param name="accountId">The account identifier.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified account identifier is locked; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsLocked(string accountId)
         {
-            var isLockedResponse = httpClient.PostAsJsonAsync("api/failedCounter/IsLocked", accountId).Result;
+            var isLockedResponse = new HttpClient() { BaseAddress = new Uri("http://joey.com/") }.PostAsJsonAsync("api/failedCounter/IsLocked", accountId).Result;
             isLockedResponse.EnsureSuccessStatusCode();
             var IsLocked = isLockedResponse.Content.ReadAsAsync<bool>().Result;
             return IsLocked;

@@ -32,9 +32,7 @@ namespace DependencyInjectionWorkshop.Models
         /// <exception cref="DependencyInjectionWorkshop.Models.FailedTooManyTimesException"></exception>
         public bool Verify(string accountId, string password, string otp)
         {
-            var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
-            
-            var isLocked = _failCounter.IsLocked(accountId, httpClient);
+            var isLocked = _failCounter.IsLocked(accountId);
             if (isLocked)
             {
                 throw new FailedTooManyTimesException(){AccountId = accountId};
@@ -44,18 +42,18 @@ namespace DependencyInjectionWorkshop.Models
 
             var hashedPassword = _sha256Adapter.HashedPassword(password);
 
-            var currentOtp = _otpAdapter.GetOtp(accountId, httpClient);
+            var currentOtp = _otpAdapter.GetOtp(accountId, new HttpClient() { BaseAddress = new Uri("http://joey.com/") });
 
             if (currentOtp == otp && hashedPassword == passwordFromDb)
             {
-                _failCounter.Reset(accountId, httpClient);
+                _failCounter.Reset(accountId, new HttpClient() { BaseAddress = new Uri("http://joey.com/") });
                 return true;
             }
             else
             {
-                _failCounter.Add(accountId, httpClient);
+                _failCounter.Add(accountId, new HttpClient() { BaseAddress = new Uri("http://joey.com/") });
 
-                var failedCount = _failCounter.Get(accountId, httpClient);
+                var failedCount = _failCounter.Get(accountId, new HttpClient() { BaseAddress = new Uri("http://joey.com/") });
                 _nLogAdapter.Info(accountId, failedCount);
                 _slackAdapter.Notify(accountId);
                     return false;
