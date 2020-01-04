@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Dapper;
+using SlackAPI;
 
 namespace DependencyInjectionWorkshop.Models
 {
@@ -48,8 +49,16 @@ namespace DependencyInjectionWorkshop.Models
             }
             else
             {
+                Notify($"account:{accountId} try to login failed");
                 return false;
             }
+        }
+
+
+        public void Notify(string message)
+        {
+            var slackClient = new SlackClient("my api token");
+            slackClient.PostMessage(response => { }, "my channel", message, "my bot name");
         }
     }
 }
