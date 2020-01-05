@@ -33,6 +33,7 @@ namespace MyConsole
             builder.RegisterDecorator<FailedCounterDecorator, IAuthentication>();
             builder.RegisterDecorator<LoggerDecorator, IAuthentication>();
             builder.RegisterDecorator<NotificationDecorator, IAuthentication>();
+            builder.RegisterDecorator<LogMethodInfoDecorator, IAuthentication>();
 
             _container = builder.Build();
         }
@@ -109,6 +110,24 @@ namespace MyConsole
                 Console.WriteLine($"{nameof(FakeProfile)}.{nameof(Password)}({accountId})");
                 return "my hashed password";
             }
+        }
+    }
+
+    internal class LogMethodInfoDecorator:AuthenticationDecoratorBase
+    {
+        private readonly ILogger _logger;
+
+        public LogMethodInfoDecorator(IAuthentication authenticationService, ILogger logger) : base(authenticationService)
+        {
+            _logger = logger;
+        }
+
+        public override bool Verify(string accountId, string password, string otp)
+        {
+            _logger.Info($"parameters:{accountId}| {password}|{otp}");
+            var verify = base.Verify(accountId, password, otp);
+            _logger.Info($"verify is {verify}");
+            return verify;
         }
     }
 }
