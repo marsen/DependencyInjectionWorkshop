@@ -35,12 +35,7 @@ namespace DependencyInjectionWorkshop.Models
         /// <exception cref="FailedTooManyTimesException"></exception>
         public bool Verify(string accountId, string password, string otp)
         {
-            var passwordFromDb = _profile.Password(accountId);
-
-            var hashedPassword = _hash.ComputeHash(password);
-
-
-            if (CheckOtp(otp, accountId) && hashedPassword == passwordFromDb)
+            if (CheckOtp(otp, accountId) && CheckPassword(accountId, password))
             {
                 return true;
             }
@@ -48,6 +43,13 @@ namespace DependencyInjectionWorkshop.Models
             {
                 return false;
             }
+        }
+
+        private bool CheckPassword(string accountId, string password)
+        {
+            var passwordFromDb = _profile.Password(accountId);
+            var hashedPassword = _hash.ComputeHash(password);
+            return hashedPassword == passwordFromDb;
         }
 
         private bool CheckOtp(string otp, string accountId)
