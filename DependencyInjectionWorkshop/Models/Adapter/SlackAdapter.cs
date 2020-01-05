@@ -1,6 +1,6 @@
 ﻿using SlackAPI;
 
-namespace DependencyInjectionWorkshop.Models
+namespace DependencyInjectionWorkshop.Models.Adapter
 {
     public class SlackAdapter : INotification
     {
