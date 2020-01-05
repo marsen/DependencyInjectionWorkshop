@@ -30,20 +30,17 @@
         /// <exception cref="FailedTooManyTimesException"></exception>
         public bool Verify(string accountId, string password, string otp)
         {
-            return CheckOtp(otp, accountId) && CheckPassword(accountId, password);
+            return CheckOtp(accountId, otp) && CheckPassword(accountId, password);
         }
 
         private bool CheckPassword(string accountId, string password)
         {
-            var passwordFromDb = _profile.Password(accountId);
-            var hashedPassword = _hash.ComputeHash(password);
-            return hashedPassword == passwordFromDb;
+            return _hash.ComputeHash(password) == _profile.Password(accountId);
         }
 
-        private bool CheckOtp(string otp, string accountId)
+        private bool CheckOtp(string accountId, string otp)
         {
-            var currentOtp = _otpService.GetOtp(accountId);
-            return currentOtp == otp;
+            return _otpService.GetOtp(accountId) == otp;
         }
     }
 }
