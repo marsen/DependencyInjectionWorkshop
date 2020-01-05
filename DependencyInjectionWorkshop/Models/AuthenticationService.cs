@@ -32,7 +32,7 @@ namespace DependencyInjectionWorkshop.Models
         /// <param name="password">The password.</param>
         /// <param name="otp">The otp.</param>
         /// <returns></returns>
-        /// <exception cref="DependencyInjectionWorkshop.Models.FailedTooManyTimesException"></exception>
+        /// <exception cref="FailedTooManyTimesException"></exception>
         public bool Verify(string accountId, string password, string otp)
         {
             var passwordFromDb = _profile.Password(accountId);
