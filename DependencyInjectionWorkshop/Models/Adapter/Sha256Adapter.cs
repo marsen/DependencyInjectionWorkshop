@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace DependencyInjectionWorkshop.Models
+namespace DependencyInjectionWorkshop.Models.Adapter
 {
     public class Sha256Adapter : IHash
     {
