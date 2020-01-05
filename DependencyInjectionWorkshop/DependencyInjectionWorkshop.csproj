@@ -82,7 +82,7 @@
     <Compile Include="Models\FailedTooManyTimesException.cs" />
     <Compile Include="Models\IAuthentication.cs" />
     <Compile Include="Models\LoggerDecorator.cs" />
-    <Compile Include="Models\NLogAdapter.cs" />
+    <Compile Include="Models\Adapter\NLogAdapter.cs" />
     <Compile Include="Models\Decorator\NotificationDecorator.cs" />
     <Compile Include="Models\OtpAdapter.cs" />
     <Compile Include="Models\ProfileDao.cs" />

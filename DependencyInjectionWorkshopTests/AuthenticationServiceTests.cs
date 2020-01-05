@@ -1,5 +1,6 @@
 ﻿using System;
 using DependencyInjectionWorkshop.Models;
+using DependencyInjectionWorkshop.Models.Adapter;
 using DependencyInjectionWorkshop.Models.Decorator;
 using NSubstitute;
 using NUnit.Framework;

@@ -1,4 +1,5 @@
-﻿using DependencyInjectionWorkshop.Models.Decorator;
+﻿using DependencyInjectionWorkshop.Models.Adapter;
+using DependencyInjectionWorkshop.Models.Decorator;
 
 namespace DependencyInjectionWorkshop.Models
 {
