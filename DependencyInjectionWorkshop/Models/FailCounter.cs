@@ -13,6 +13,7 @@ namespace DependencyInjectionWorkshop.Models
 
         void Reset(string accountId);
         void Add(string accountId);
+        [AuditLog]
         int Get(string accountId);
     }
 
@@ -51,7 +52,6 @@ namespace DependencyInjectionWorkshop.Models
             addFailedCountResponse.EnsureSuccessStatusCode();
         }
 
-        [AuditLog]
         public int Get(string accountId)
         {
             // failed log 

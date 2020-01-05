@@ -10,6 +10,7 @@
         /// <param name="otp">The otp.</param>
         /// <returns></returns>
         /// <exception cref="DependencyInjectionWorkshop.Models.FailedTooManyTimesException"></exception>
+        [AuditLog]
         bool Verify(string accountId, string password, string otp);
     }
 }
