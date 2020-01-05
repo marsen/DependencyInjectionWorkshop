@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
@@ -36,7 +37,9 @@ namespace MyConsole
             builder.RegisterType<FakeProfile>().As<IProfile>();
             builder.RegisterType<FakeLogger>().As<ILogger>();
             builder.RegisterType<FakeSlack>().As<INotification>();
-            builder.RegisterType<FakeFailedCounter>().As<IFailedCounter>();
+            builder.RegisterType<FakeFailedCounter>().As<IFailedCounter>()
+                .EnableInterfaceInterceptors()
+                .InterceptedBy(typeof(AuditLogInterceptor));
 
             builder.RegisterType<FakeContext>().As<IContext>().SingleInstance();
             builder.RegisterType<AuditLogInterceptor>();
@@ -142,7 +145,9 @@ namespace MyConsole
 
         public void Intercept(IInvocation invocation)
         {
-            _logger.Info($"[Audit - {invocation.Method.Name} input]user {_context.GetUser().Name},parameters:{invocation.Arguments[0]}| {invocation.Arguments[1]}|{invocation.Arguments[2]}");
+
+            var parameters = string.Join("|", invocation.Arguments.Select(x => (x ?? "").ToString()));
+            _logger.Info($"[Audit - {invocation.Method.Name} input]user {_context.GetUser().Name},parameters:{parameters}");
             invocation.Proceed();
             _logger.Info($"[Audit - {invocation.Method.Name} output]verify is {invocation.ReturnValue}");
 
