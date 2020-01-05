@@ -113,11 +113,12 @@ namespace MyConsole
         }
     }
 
-    internal class LogMethodInfoDecorator:AuthenticationDecoratorBase
+    internal class LogMethodInfoDecorator : AuthenticationDecoratorBase
     {
         private readonly ILogger _logger;
 
-        public LogMethodInfoDecorator(IAuthentication authenticationService, ILogger logger) : base(authenticationService)
+        public LogMethodInfoDecorator(IAuthentication authenticationService, ILogger logger) : base(
+            authenticationService)
         {
             _logger = logger;
         }
