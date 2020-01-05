@@ -1,8 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using DependencyInjectionWorkshop.Models.Decorator;
-
-namespace DependencyInjectionWorkshop.Models
+﻿namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService : IAuthentication
     {
@@ -24,7 +20,6 @@ namespace DependencyInjectionWorkshop.Models
             _otpService = new OtpService();
         }
 
-
         /// <summary>
         /// Verifies the specified account identifier.
         /// </summary>
@@ -35,14 +30,7 @@ namespace DependencyInjectionWorkshop.Models
         /// <exception cref="FailedTooManyTimesException"></exception>
         public bool Verify(string accountId, string password, string otp)
         {
-            if (CheckOtp(otp, accountId) && CheckPassword(accountId, password))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return CheckOtp(otp, accountId) && CheckPassword(accountId, password);
         }
 
         private bool CheckPassword(string accountId, string password)
