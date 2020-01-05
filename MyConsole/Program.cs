@@ -13,10 +13,17 @@ namespace MyConsole
         private static void Main(string[] args)
         {
             RegisterContainer();
+            Login("Marsen's agent");
             var authentication = _container.Resolve<IAuthentication>();
             var isValid = authentication.Verify("joey", "abc", "wrong otp");
             Console.WriteLine($"result:{isValid}");
             Console.ReadLine();
+        }
+
+        private static void Login(string agent)
+        {
+            IContext context = _container.Resolve<IContext>();
+            context.SetUser(agent);
         }
 
         private static void RegisterContainer()
@@ -28,12 +35,16 @@ namespace MyConsole
             builder.RegisterType<FakeLogger>().As<ILogger>();
             builder.RegisterType<FakeSlack>().As<INotification>();
             builder.RegisterType<FakeFailedCounter>().As<IFailedCounter>();
+
+            builder.RegisterType<FakeContext>().As<IContext>().SingleInstance();
+
             builder.RegisterType<AuthenticationService>().As<IAuthentication>();
 
             builder.RegisterDecorator<FailedCounterDecorator, IAuthentication>();
             builder.RegisterDecorator<LoggerDecorator, IAuthentication>();
             builder.RegisterDecorator<NotificationDecorator, IAuthentication>();
-            builder.RegisterDecorator<LogMethodInfoDecorator, IAuthentication>();
+            //builder.RegisterDecorator<LogMethodInfoDecorator, IAuthentication>();
+            builder.RegisterDecorator<AuditLogDecorator, IAuthentication>();
 
             _container = builder.Build();
         }
@@ -111,6 +122,53 @@ namespace MyConsole
                 return "my hashed password";
             }
         }
+    }
+
+    internal class FakeContext : IContext
+    {
+        private User _user;
+
+        public User GetUser()
+        {
+            return _user;
+        }
+
+        public void SetUser(string userName)
+        {
+            _user = new User{Name = userName};
+        }
+    }
+
+    internal class AuditLogDecorator:AuthenticationDecoratorBase
+    {
+        private readonly ILogger _logger;
+        private readonly IContext _context;
+
+        public AuditLogDecorator(IAuthentication authenticationService, ILogger logger, IContext context) : base(authenticationService)
+        {
+            _logger = logger;
+            this._context = context;
+        }
+
+        public override bool Verify(string accountId, string password, string otp)
+        {
+            _logger.Info($"user {_context.GetUser().Name},parameters:{accountId}| {password}|{otp}");
+            var verify = base.Verify(accountId, password, otp);
+            _logger.Info($"verify is {verify}");
+            return verify;
+        }
+    }
+
+    public interface IContext
+    {
+        User GetUser();
+        void SetUser(string userName);
+    }
+
+    public class User
+    {
+        public string Name { get; set; }
+
     }
 
     internal class LogMethodInfoDecorator : AuthenticationDecoratorBase
