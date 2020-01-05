@@ -41,7 +41,7 @@ namespace DependencyInjectionWorkshop.Models
 
             var currentOtp = _otpService.GetOtp(accountId);
 
-            if (currentOtp == otp && hashedPassword == passwordFromDb)
+            if (CheckOtp(otp, accountId) && hashedPassword == passwordFromDb)
             {
                 return true;
             }
@@ -49,6 +49,12 @@ namespace DependencyInjectionWorkshop.Models
             {
                 return false;
             }
+        }
+
+        private bool CheckOtp(string otp, string accountId)
+        {
+            var currentOtp = _otpService.GetOtp(accountId);
+            return currentOtp == otp;
         }
     }
 }
