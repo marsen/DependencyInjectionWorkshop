@@ -46,7 +46,7 @@ namespace MyConsole
 
             builder.RegisterType<AuthenticationService>().As<IAuthentication>()
                 .EnableInterfaceInterceptors()
-                .InterceptedBy(typeof(AuditLogInterceptor)); 
+                .InterceptedBy(typeof(AuditLogInterceptor));
 
             builder.RegisterDecorator<FailedCounterDecorator, IAuthentication>();
             builder.RegisterDecorator<LoggerDecorator, IAuthentication>();
@@ -132,7 +132,7 @@ namespace MyConsole
         }
     }
 
-    internal class AuditLogInterceptor:IInterceptor
+    internal class AuditLogInterceptor : IInterceptor
     {
         private readonly ILogger _logger;
         private readonly IContext _context;
@@ -145,12 +145,17 @@ namespace MyConsole
 
         public void Intercept(IInvocation invocation)
         {
-
-            var parameters = string.Join("|", invocation.Arguments.Select(x => (x ?? "").ToString()));
-            _logger.Info($"[Audit - {invocation.Method.Name} input]user {_context.GetUser().Name},parameters:{parameters}");
-            invocation.Proceed();
-            _logger.Info($"[Audit - {invocation.Method.Name} output]verify is {invocation.ReturnValue}");
-
+            if (!(Attribute.GetCustomAttribute(invocation.Method, typeof(AuditLogAttribute)) is AuditLogAttribute auditLogAttribute))
+            {
+                invocation.Proceed();
+            }
+            else
+            {
+                var parameters = string.Join("|", invocation.Arguments.Select(x => (x ?? "").ToString()));
+                _logger.Info($"[Audit - {invocation.Method.Name} input]user {_context.GetUser().Name},parameters:{parameters}");
+                invocation.Proceed();
+                _logger.Info($"[Audit - {invocation.Method.Name} output]verify is {invocation.ReturnValue}");
+            }
         }
     }
 
@@ -165,11 +170,11 @@ namespace MyConsole
 
         public void SetUser(string userName)
         {
-            _user = new User{Name = userName};
+            _user = new User { Name = userName };
         }
     }
 
-    internal class AuditLogDecorator:AuthenticationDecoratorBase
+    internal class AuditLogDecorator : AuthenticationDecoratorBase
     {
         private readonly ILogger _logger;
         private readonly IContext _context;
@@ -192,13 +197,13 @@ namespace MyConsole
     public interface IContext
     {
         User GetUser();
+
         void SetUser(string userName);
     }
 
     public class User
     {
         public string Name { get; set; }
-
     }
 
     internal class LogMethodInfoDecorator : AuthenticationDecoratorBase
