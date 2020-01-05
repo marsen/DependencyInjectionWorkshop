@@ -15,6 +15,7 @@ namespace DependencyInjectionWorkshop.Models
         public AuthenticationService(IProfile profile, IHash hash,
             IFailedCounter failedCounter, IOtpService otpService, ILogger logger)
         {
+            //_loggerDecorator = new LoggerDecorator(this);
             _profile = profile;
             _hash = hash;
             _failedCounter = failedCounter;
@@ -24,6 +25,7 @@ namespace DependencyInjectionWorkshop.Models
 
         public AuthenticationService()
         {
+            //_loggerDecorator = new LoggerDecorator(this);
             _profile = new ProfileDao();
             _hash = new Sha256Adapter();
             _failedCounter = new FailedCounter();
@@ -58,12 +60,11 @@ namespace DependencyInjectionWorkshop.Models
             }
             else
             {
-                var failedCount = _failedCounter.Get(accountId);
-                _logger.Info($"accountId:{accountId} failed times:{failedCount}");
                 return false;
             }
         }
 
         private FailedCounterDecorator a;
+        private readonly LoggerDecorator _loggerDecorator;
     }
 }

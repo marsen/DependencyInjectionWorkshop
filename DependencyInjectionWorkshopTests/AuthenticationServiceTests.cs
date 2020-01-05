@@ -32,6 +32,7 @@ namespace DependencyInjectionWorkshopTests
                 new AuthenticationService(_profile, _hash, _failedCounter, _otpService, _logger);
             _authenticationService = new NotificationDecorator(_authenticationService, _notification);
             _authenticationService = new FailedCounterDecorator(_authenticationService, _failedCounter);
+            _authenticationService = new LoggerDecorator(_authenticationService, _logger, _failedCounter);
         }
 
         [Test]

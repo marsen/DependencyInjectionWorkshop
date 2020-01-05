@@ -81,6 +81,7 @@
     <Compile Include="Models\Decorator\FailedCounterDecorator.cs" />
     <Compile Include="Models\FailedTooManyTimesException.cs" />
     <Compile Include="Models\IAuthentication.cs" />
+    <Compile Include="Models\LoggerDecorator.cs" />
     <Compile Include="Models\NLogAdapter.cs" />
     <Compile Include="Models\Decorator\NotificationDecorator.cs" />
     <Compile Include="Models\OtpAdapter.cs" />
