@@ -1,5 +1,4 @@
 ﻿using System;
-using Castle.Core.Logging;
 using DependencyInjectionWorkshop.Models;
 using DependencyInjectionWorkshop.Models.Decorator;
 using NSubstitute;
@@ -49,6 +48,18 @@ namespace DependencyInjectionWorkshopTests
         {
             WhenValid();
             FailedCounterShouldReset();
+        }
+
+        [Test]
+        public void check_invalid_order()
+        {
+            WhenInvalid();
+            Received.InOrder(() =>
+            {
+                _failedCounter.Add(DefaultAccountId);
+                _logger.Info(Arg.Is<string>(x => x.Contains(DefaultAccountId)));
+                _notification.Notify(DefaultAccountId, Arg.Is<string>(x => x.Contains(DefaultAccountId)));
+            });
         }
 
         [Test]
@@ -113,7 +124,6 @@ namespace DependencyInjectionWorkshopTests
             TestDelegate action = () => _authenticationService.Verify(DefaultAccountId, "1234", "123456");
             Assert.Throws<TException>(action);
         }
-
 
         private void GivenAccountIsLocked(bool isLocked)
         {
