@@ -1,5 +1,7 @@
 ﻿using System;
 using Autofac;
+using Autofac.Extras.DynamicProxy;
+using Castle.DynamicProxy;
 using DependencyInjectionWorkshop.Models;
 using DependencyInjectionWorkshop.Models.Decorator;
 using DependencyInjectionWorkshop.Models.Interface;
@@ -37,8 +39,11 @@ namespace MyConsole
             builder.RegisterType<FakeFailedCounter>().As<IFailedCounter>();
 
             builder.RegisterType<FakeContext>().As<IContext>().SingleInstance();
+            builder.RegisterType<AuditLogInterceptor>();
 
-            builder.RegisterType<AuthenticationService>().As<IAuthentication>();
+            builder.RegisterType<AuthenticationService>().As<IAuthentication>()
+                .EnableInterfaceInterceptors()
+                .InterceptedBy(typeof(AuditLogInterceptor)); 
 
             builder.RegisterDecorator<FailedCounterDecorator, IAuthentication>();
             builder.RegisterDecorator<LoggerDecorator, IAuthentication>();
@@ -121,6 +126,26 @@ namespace MyConsole
                 Console.WriteLine($"{nameof(FakeProfile)}.{nameof(Password)}({accountId})");
                 return "my hashed password";
             }
+        }
+    }
+
+    internal class AuditLogInterceptor:IInterceptor
+    {
+        private readonly ILogger _logger;
+        private readonly IContext _context;
+
+        public AuditLogInterceptor(ILogger logger, IContext context)
+        {
+            _logger = logger;
+            _context = context;
+        }
+
+        public void Intercept(IInvocation invocation)
+        {
+            _logger.Info($"[Audit - {invocation.Method.Name} input]user {_context.GetUser().Name},parameters:{invocation.Arguments[0]}| {invocation.Arguments[1]}|{invocation.Arguments[2]}");
+            invocation.Proceed();
+            _logger.Info($"[Audit - {invocation.Method.Name} output]verify is {invocation.ReturnValue}");
+
         }
     }
 
