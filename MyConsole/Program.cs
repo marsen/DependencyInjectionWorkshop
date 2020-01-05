@@ -47,7 +47,7 @@ namespace MyConsole
         {
             public void Info(string message)
             {
-                Console.WriteLine($"logger: {message}");
+                Console.WriteLine($"Logger: {message}");
             }
         }
 
