@@ -39,7 +39,6 @@ namespace DependencyInjectionWorkshop.Models
 
             var hashedPassword = _hash.ComputeHash(password);
 
-            var currentOtp = _otpService.GetOtp(accountId);
 
             if (CheckOtp(otp, accountId) && hashedPassword == passwordFromDb)
             {
