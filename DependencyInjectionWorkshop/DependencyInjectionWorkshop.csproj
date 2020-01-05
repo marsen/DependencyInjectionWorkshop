@@ -75,7 +75,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Adapter\ILogger.cs" />
+    <Compile Include="Models\Interface\ILogger.cs" />
     <Compile Include="Models\Decorator\AuthenticationDecoratorBase.cs" />
     <Compile Include="Models\AuthenticationService.cs" />
     <Compile Include="Models\FailCounter.cs" />

@@ -1,4 +1,6 @@
-﻿namespace DependencyInjectionWorkshop.Models.Adapter
+﻿using DependencyInjectionWorkshop.Models.Interface;
+
+namespace DependencyInjectionWorkshop.Models.Adapter
 {
     public class NLoggerAdapter : ILogger
     {

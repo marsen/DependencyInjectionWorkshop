@@ -1,4 +1,4 @@
-﻿namespace DependencyInjectionWorkshop.Models.Adapter
+﻿namespace DependencyInjectionWorkshop.Models.Interface
 {
     public interface ILogger
     {

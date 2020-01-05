@@ -1,9 +1,10 @@
 ﻿using System;
+using Castle.Core.Logging;
 using DependencyInjectionWorkshop.Models;
-using DependencyInjectionWorkshop.Models.Adapter;
 using DependencyInjectionWorkshop.Models.Decorator;
 using NSubstitute;
 using NUnit.Framework;
+using ILogger = DependencyInjectionWorkshop.Models.Interface.ILogger;
 
 namespace DependencyInjectionWorkshopTests
 {
