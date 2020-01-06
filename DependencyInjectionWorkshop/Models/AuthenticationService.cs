@@ -20,17 +20,46 @@ namespace DependencyInjectionWorkshop.Models
         }
     }
 
+    public class FailedCounter
+    {
+        public void ResetFailedCount(string accountId, HttpClient httpClient)
+        {
+            var resetResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
+            resetResponse.EnsureSuccessStatusCode();
+        }
+
+        public void CheckIsLocked(string accountId, HttpClient httpClient)
+        {
+            //check account locked
+            var isLockedResponse = httpClient.PostAsJsonAsync("api/failedCounter/IsLocked", accountId).Result;
+
+            isLockedResponse.EnsureSuccessStatusCode();
+            if (isLockedResponse.Content.ReadAsAsync<bool>().Result)
+            {
+                throw new FailedTooManyTimesException() {AccountId = accountId};
+            }
+        }
+
+        public void AddFailedCount(string accountId, HttpClient httpClient)
+        {
+            //失敗
+            var addFailedCountResponse = httpClient.PostAsJsonAsync("api/failedCounter/Add", accountId).Result;
+            addFailedCountResponse.EnsureSuccessStatusCode();
+        }
+    }
+
     public class AuthenticationService
     {
         private readonly ProfileInfo _profileInfo = new ProfileInfo();
         private readonly SHA256Hash _sha256Hash = new SHA256Hash();
         private readonly OtpService _otpService = new OtpService();
+        private readonly FailedCounter _failedCounter = new FailedCounter();
 
         public bool Verify(string accountId, string password, string otp)
         {
             var httpClient = new HttpClient() {BaseAddress = new Uri("http://joey.com/")};
 
-            CheckIsLocked(accountId, httpClient);
+            _failedCounter.CheckIsLocked(accountId, httpClient);
 
             var passwordFromDb = _profileInfo.GetPasswordFromDb(accountId);
 
@@ -41,13 +70,13 @@ namespace DependencyInjectionWorkshop.Models
             //compare
             if (passwordFromDb == hashedPassword && currentOtp == otp)
             {
-                ResetFailedCount(accountId, httpClient);
+                _failedCounter.ResetFailedCount(accountId, httpClient);
 
                 return true;
             }
             else
             {
-                AddFailedCount(accountId, httpClient);
+                _failedCounter.AddFailedCount(accountId, httpClient);
 
                 LogFailedCount(accountId, httpClient);
 
@@ -76,31 +105,6 @@ namespace DependencyInjectionWorkshop.Models
             var failedCount = failedCountResponse.Content.ReadAsAsync<int>().Result;
             var logger = NLog.LogManager.GetCurrentClassLogger();
             logger.Info($"accountId:{accountId} failed times:{failedCount}");
-        }
-
-        private static void AddFailedCount(string accountId, HttpClient httpClient)
-        {
-            //失敗
-            var addFailedCountResponse = httpClient.PostAsJsonAsync("api/failedCounter/Add", accountId).Result;
-            addFailedCountResponse.EnsureSuccessStatusCode();
-        }
-
-        private static void ResetFailedCount(string accountId, HttpClient httpClient)
-        {
-            var resetResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
-            resetResponse.EnsureSuccessStatusCode();
-        }
-
-        private static void CheckIsLocked(string accountId, HttpClient httpClient)
-        {
-            //check account locked
-            var isLockedResponse = httpClient.PostAsJsonAsync("api/failedCounter/IsLocked", accountId).Result;
-
-            isLockedResponse.EnsureSuccessStatusCode();
-            if (isLockedResponse.Content.ReadAsAsync<bool>().Result)
-            {
-                throw new FailedTooManyTimesException() {AccountId = accountId};
-            }
         }
     }
 }
