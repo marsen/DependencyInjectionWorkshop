@@ -80,6 +80,7 @@
     <Compile Include="Models\FailedTooManyTimesException.cs" />
     <Compile Include="Models\Interface\IHash.cs" />
     <Compile Include="Models\Interface\IProfileInfo.cs" />
+    <Compile Include="Models\IOtpService.cs" />
     <Compile Include="Models\NLogger.cs" />
     <Compile Include="Models\OtpService.cs" />
     <Compile Include="Models\ProfileInfo.cs" />

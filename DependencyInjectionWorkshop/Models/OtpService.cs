@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Net.Http;
+using DependencyInjectionWorkshop.Models.Interface;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public class OtpService
+    public class OtpService : IOtpService
     {
         public string CurrentOtp(string accountId, HttpClient httpClient)
         {
