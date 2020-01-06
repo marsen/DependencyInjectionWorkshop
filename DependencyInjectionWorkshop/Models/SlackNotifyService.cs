@@ -1,8 +1,9 @@
-﻿using SlackAPI;
+﻿using DependencyInjectionWorkshop.Models.Interface;
+using SlackAPI;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public class SlackNotifyService
+    public class SlackNotifyService : INotify
     {
         public void Notify(string message)
         {
