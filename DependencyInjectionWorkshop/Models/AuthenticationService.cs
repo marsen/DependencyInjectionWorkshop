@@ -6,14 +6,26 @@ namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService
     {
-        private readonly IProfileInfo _profileInfo = new ProfileInfo();
-        private readonly IHash _hash = new SHA256Hash();
-        private readonly IOtpService _otpService = new OtpService();
-        private readonly IFailedCounter _failedCounter = new FailedCounter();
-        private readonly INotify _notifyService = new SlackNotifyService();
-        private readonly ILogger _logger = new NLogger();
+        private readonly IProfileInfo _profileInfo;
+        private readonly IHash _hash;
+        private readonly IOtpService _otpService;
+        private readonly IFailedCounter _failedCounter;
+        private readonly INotify _notifyService;
+        private readonly ILogger _logger;
 
-        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthenticationService" /> class.
+        /// </summary>
+        public AuthenticationService()
+        {
+            _profileInfo = new ProfileInfo();
+            _hash = new SHA256Hash();
+            _otpService = new OtpService();
+            _failedCounter = new FailedCounter();
+            _notifyService = new SlackNotifyService();
+            _logger = new NLogger();
+        }
+
         public bool Verify(string accountId, string password, string otp)
         {
             var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
@@ -40,7 +52,7 @@ namespace DependencyInjectionWorkshop.Models
                 var failedCount = _failedCounter.Get(accountId, httpClient);
                 _logger.Log($"accountId:{accountId} failed times:{failedCount}");
 
-                _notifyService.Notify( $"account:{accountId} try to login failed");
+                _notifyService.Notify($"account:{accountId} try to login failed");
 
                 return false;
             }
