@@ -11,7 +11,7 @@ namespace DependencyInjectionWorkshop.Models
         private readonly IOtpService _otpService = new OtpService();
         private readonly IFailedCounter _failedCounter = new FailedCounter();
         private readonly INotify _slackNotifyService = new SlackNotifyService();
-        private readonly NLogger _nLogger = new NLogger();
+        private readonly ILogger _nLogger = new NLogger();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationService" /> class.
