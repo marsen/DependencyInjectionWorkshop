@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Net.Http;
+using DependencyInjectionWorkshop.Models.Interface;
 
 namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService
     {
-        private readonly ProfileInfo _profileInfo = new ProfileInfo();
+        private readonly IProfileInfo _profileInfo = new ProfileInfo();
         private readonly SHA256Hash _sha256Hash = new SHA256Hash();
         private readonly OtpService _otpService = new OtpService();
         private readonly FailedCounter _failedCounter = new FailedCounter();
@@ -38,7 +39,7 @@ namespace DependencyInjectionWorkshop.Models
                 var failedCount = _failedCounter.GetFailedCount(accountId, httpClient);
                 _nLogger.Log($"accountId:{accountId} failed times:{failedCount}");
 
-                _slackNotifyService.Notify(accountId, $"account:{accountId} try to login failed");
+                _slackNotifyService.Notify( $"account:{accountId} try to login failed");
 
                 return false;
             }

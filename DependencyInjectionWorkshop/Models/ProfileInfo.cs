@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
+using DependencyInjectionWorkshop.Models.Interface;
 
 namespace DependencyInjectionWorkshop.Models
 {
