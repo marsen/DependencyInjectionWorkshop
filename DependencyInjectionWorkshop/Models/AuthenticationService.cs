@@ -36,7 +36,7 @@ namespace DependencyInjectionWorkshop.Models
             isLockedResponse.EnsureSuccessStatusCode();
             if (isLockedResponse.Content.ReadAsAsync<bool>().Result)
             {
-                throw new FailedTooManyTimesException() {AccountId = accountId};
+                throw new FailedTooManyTimesException() { AccountId = accountId };
             }
         }
 
@@ -49,7 +49,7 @@ namespace DependencyInjectionWorkshop.Models
 
         public int GetFailedCount(string accountId, HttpClient httpClient)
         {
-            //紀錄失敗次數 
+            //紀錄失敗次數
             var failedCountResponse =
                 httpClient.PostAsJsonAsync("api/failedCounter/GetFailedCount", accountId).Result;
 
@@ -81,7 +81,7 @@ namespace DependencyInjectionWorkshop.Models
 
         public bool Verify(string accountId, string password, string otp)
         {
-            var httpClient = new HttpClient() {BaseAddress = new Uri("http://joey.com/")};
+            var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
 
             _failedCounter.CheckIsLocked(accountId, httpClient);
 
@@ -103,7 +103,7 @@ namespace DependencyInjectionWorkshop.Models
                 _failedCounter.AddFailedCount(accountId, httpClient);
 
                 var failedCount = _failedCounter.GetFailedCount(accountId, httpClient);
-                Log(accountId, failedCount);
+                Log($"accountId:{accountId} failed times:{failedCount}");
 
                 _slackNotifyService.Notify(accountId);
 
@@ -111,11 +111,10 @@ namespace DependencyInjectionWorkshop.Models
             }
         }
 
-        private static void Log(string accountId, int failedCount)
+        private void Log(string message)
         {
             var logger = NLog.LogManager.GetCurrentClassLogger();
-            logger.Info($"accountId:{accountId} failed times:{failedCount}");
+            logger.Info(message);
         }
-
     }
 }
