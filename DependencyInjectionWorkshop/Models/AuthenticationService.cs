@@ -60,12 +60,24 @@ namespace DependencyInjectionWorkshop.Models
         }
     }
 
+    public class SlackNotifyService
+    {
+        public void Notify(string accountId)
+        {
+            //notify
+            string message = $"account:{accountId} try to login failed";
+            var slackClient = new SlackClient("my api token");
+            slackClient.PostMessage(messageResponse => { }, "my channel", message, "my bot name");
+        }
+    }
+
     public class AuthenticationService
     {
         private readonly ProfileInfo _profileInfo = new ProfileInfo();
         private readonly SHA256Hash _sha256Hash = new SHA256Hash();
         private readonly OtpService _otpService = new OtpService();
         private readonly FailedCounter _failedCounter = new FailedCounter();
+        private readonly SlackNotifyService _slackNotifyService = new SlackNotifyService();
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -92,18 +104,10 @@ namespace DependencyInjectionWorkshop.Models
 
                 LogFailedCount(accountId, httpClient);
 
-                Notify(accountId);
+                _slackNotifyService.Notify(accountId);
 
                 return false;
             }
-        }
-
-        private static void Notify(string accountId)
-        {
-            //notify
-            string message = $"account:{accountId} try to login failed";
-            var slackClient = new SlackClient("my api token");
-            slackClient.PostMessage(messageResponse => { }, "my channel", message, "my bot name");
         }
 
         private  void LogFailedCount(string accountId, HttpClient httpClient)
