@@ -7,7 +7,7 @@ namespace DependencyInjectionWorkshop.Models
     public class AuthenticationService
     {
         private readonly IProfileInfo _profileInfo = new ProfileInfo();
-        private readonly SHA256Hash _sha256Hash = new SHA256Hash();
+        private readonly IHash _sha256Hash = new SHA256Hash();
         private readonly OtpService _otpService = new OtpService();
         private readonly FailedCounter _failedCounter = new FailedCounter();
         private readonly SlackNotifyService _slackNotifyService = new SlackNotifyService();

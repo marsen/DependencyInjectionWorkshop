@@ -1,8 +1,9 @@
 ﻿using System.Text;
+using DependencyInjectionWorkshop.Models.Interface;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public class SHA256Hash
+    public class SHA256Hash : IHash
     {
         public string HashedPassword(string password)
         {
