@@ -13,6 +13,15 @@ namespace DependencyInjectionWorkshop.Models
         private readonly INotify _notifyService;
         private readonly ILogger _logger;
 
+        public AuthenticationService(IProfileInfo profileInfo, IHash hash, IOtpService otpService, IFailedCounter failedCounter, INotify notifyService, ILogger logger)
+        {
+            _profileInfo = profileInfo;
+            _hash = hash;
+            _otpService = otpService;
+            _failedCounter = failedCounter;
+            _notifyService = notifyService;
+            _logger = logger;
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationService" /> class.
         /// </summary>
