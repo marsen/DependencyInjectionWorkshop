@@ -5,7 +5,7 @@ using Dapper;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public class ProfileInfo
+    public class ProfileInfo : IProfileInfo
     {
         public string Password(string accountId)
         {
