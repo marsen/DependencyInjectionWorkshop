@@ -18,7 +18,7 @@ namespace DependencyInjectionWorkshop.Models
 
             _failedCounter.CheckIsLocked(accountId, httpClient);
 
-            var passwordFromDb = _profileInfo.GetPasswordFromDb(accountId);
+            var passwordFromDb = _profileInfo.Password(accountId);
 
             var hashedPassword = _sha256Hash.HashedPassword(password);
 

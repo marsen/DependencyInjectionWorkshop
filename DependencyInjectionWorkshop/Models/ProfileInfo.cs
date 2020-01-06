@@ -7,7 +7,7 @@ namespace DependencyInjectionWorkshop.Models
 {
     public class ProfileInfo
     {
-        public string GetPasswordFromDb(string accountId)
+        public string Password(string accountId)
         {
             //get password
             string passwordFromDb;
