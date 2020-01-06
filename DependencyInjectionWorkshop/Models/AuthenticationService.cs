@@ -71,6 +71,15 @@ namespace DependencyInjectionWorkshop.Models
         }
     }
 
+    public class NLogger
+    {
+        public void Log(string message)
+        {
+            var logger = NLog.LogManager.GetCurrentClassLogger();
+            logger.Info(message);
+        }
+    }
+
     public class AuthenticationService
     {
         private readonly ProfileInfo _profileInfo = new ProfileInfo();
@@ -78,6 +87,7 @@ namespace DependencyInjectionWorkshop.Models
         private readonly OtpService _otpService = new OtpService();
         private readonly FailedCounter _failedCounter = new FailedCounter();
         private readonly SlackNotifyService _slackNotifyService = new SlackNotifyService();
+        private readonly NLogger _nLogger = new NLogger();
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -103,18 +113,12 @@ namespace DependencyInjectionWorkshop.Models
                 _failedCounter.AddFailedCount(accountId, httpClient);
 
                 var failedCount = _failedCounter.GetFailedCount(accountId, httpClient);
-                Log($"accountId:{accountId} failed times:{failedCount}");
+                _nLogger.Log($"accountId:{accountId} failed times:{failedCount}");
 
                 _slackNotifyService.Notify(accountId);
 
                 return false;
             }
-        }
-
-        private void Log(string message)
-        {
-            var logger = NLog.LogManager.GetCurrentClassLogger();
-            logger.Info(message);
         }
     }
 }
