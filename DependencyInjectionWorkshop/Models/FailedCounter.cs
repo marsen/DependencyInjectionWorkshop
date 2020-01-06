@@ -2,9 +2,20 @@
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public class FailedCounter
+    public interface IFailedCounter
     {
-        public void ResetFailedCount(string accountId, HttpClient httpClient)
+        void Reset(string accountId, HttpClient httpClient);
+
+        void CheckIsLocked(string accountId, HttpClient httpClient);
+
+        void Add(string accountId, HttpClient httpClient);
+
+        int Get(string accountId, HttpClient httpClient);
+    }
+
+    public class FailedCounter : IFailedCounter
+    {
+        public void Reset(string accountId, HttpClient httpClient)
         {
             var resetResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
             resetResponse.EnsureSuccessStatusCode();
@@ -22,14 +33,14 @@ namespace DependencyInjectionWorkshop.Models
             }
         }
 
-        public void AddFailedCount(string accountId, HttpClient httpClient)
+        public void Add(string accountId, HttpClient httpClient)
         {
             //失敗
             var addFailedCountResponse = httpClient.PostAsJsonAsync("api/failedCounter/Add", accountId).Result;
             addFailedCountResponse.EnsureSuccessStatusCode();
         }
 
-        public int GetFailedCount(string accountId, HttpClient httpClient)
+        public int Get(string accountId, HttpClient httpClient)
         {
             //紀錄失敗次數
             var failedCountResponse =

@@ -9,7 +9,7 @@ namespace DependencyInjectionWorkshop.Models
         private readonly IProfileInfo _profileInfo = new ProfileInfo();
         private readonly IHash _sha256Hash = new SHA256Hash();
         private readonly IOtpService _otpService = new OtpService();
-        private readonly FailedCounter _failedCounter = new FailedCounter();
+        private readonly IFailedCounter _failedCounter = new FailedCounter();
         private readonly SlackNotifyService _slackNotifyService = new SlackNotifyService();
         private readonly NLogger _nLogger = new NLogger();
 
@@ -35,15 +35,15 @@ namespace DependencyInjectionWorkshop.Models
             //compare
             if (passwordFromDb == hashedPassword && currentOtp == otp)
             {
-                _failedCounter.ResetFailedCount(accountId, httpClient);
+                _failedCounter.Reset(accountId, httpClient);
 
                 return true;
             }
             else
             {
-                _failedCounter.AddFailedCount(accountId, httpClient);
+                _failedCounter.Add(accountId, httpClient);
 
-                var failedCount = _failedCounter.GetFailedCount(accountId, httpClient);
+                var failedCount = _failedCounter.Get(accountId, httpClient);
                 _nLogger.Log($"accountId:{accountId} failed times:{failedCount}");
 
                 _slackNotifyService.Notify( $"account:{accountId} try to login failed");
