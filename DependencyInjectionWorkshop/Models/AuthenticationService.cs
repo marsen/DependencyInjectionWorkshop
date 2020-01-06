@@ -13,6 +13,13 @@ namespace DependencyInjectionWorkshop.Models
         private readonly SlackNotifyService _slackNotifyService = new SlackNotifyService();
         private readonly NLogger _nLogger = new NLogger();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthenticationService" /> class.
+        /// </summary>
+        public AuthenticationService()
+        {
+            _profileInfo = new ProfileInfo();
+        }
         public bool Verify(string accountId, string password, string otp)
         {
             var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
