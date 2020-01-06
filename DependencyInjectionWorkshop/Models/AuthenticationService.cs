@@ -1,25 +1,42 @@
 ﻿using System;
 using System.Net.Http;
-using System.Text;
 using SlackAPI;
 
 namespace DependencyInjectionWorkshop.Models
 {
+    public class OtpService
+    {
+        public string CurrentOtp(string accountId, HttpClient httpClient)
+        {
+            //get otp
+            var response = httpClient.PostAsJsonAsync("api/otps", accountId).Result;
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"web api error, accountId:{accountId}");
+            }
+
+            var currentOtp = response.Content.ReadAsAsync<string>().Result;
+            return currentOtp;
+        }
+    }
+
     public class AuthenticationService
     {
         private readonly ProfileInfo _profileInfo = new ProfileInfo();
+        private readonly SHA256Hash _sha256Hash = new SHA256Hash();
+        private readonly OtpService _otpService = new OtpService();
 
         public bool Verify(string accountId, string password, string otp)
         {
-            var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
+            var httpClient = new HttpClient() {BaseAddress = new Uri("http://joey.com/")};
 
             CheckIsLocked(accountId, httpClient);
 
             var passwordFromDb = _profileInfo.GetPasswordFromDb(accountId);
 
-            var hashedPassword = HashedPassword(password);
+            var hashedPassword = _sha256Hash.HashedPassword(password);
 
-            var currentOtp = CurrentOtp(accountId, httpClient);
+            var currentOtp = _otpService.CurrentOtp(accountId, httpClient);
 
             //compare
             if (passwordFromDb == hashedPassword && currentOtp == otp)
@@ -72,34 +89,6 @@ namespace DependencyInjectionWorkshop.Models
         {
             var resetResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
             resetResponse.EnsureSuccessStatusCode();
-        }
-
-        private static string CurrentOtp(string accountId, HttpClient httpClient)
-        {
-            //get otp
-            var response = httpClient.PostAsJsonAsync("api/otps", accountId).Result;
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception($"web api error, accountId:{accountId}");
-            }
-
-            var currentOtp = response.Content.ReadAsAsync<string>().Result;
-            return currentOtp;
-        }
-
-        private static string HashedPassword(string password)
-        {
-            //hash
-            var crypt = new System.Security.Cryptography.SHA256Managed();
-            var hash = new StringBuilder();
-            var crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(password));
-            foreach (var theByte in crypto)
-            {
-                hash.Append(theByte.ToString("x2"));
-            }
-
-            var hashedPassword = hash.ToString();
-            return hashedPassword;
         }
 
         private static void CheckIsLocked(string accountId, HttpClient httpClient)
