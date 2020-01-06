@@ -102,7 +102,8 @@ namespace DependencyInjectionWorkshop.Models
             {
                 _failedCounter.AddFailedCount(accountId, httpClient);
 
-                LogFailedCount(accountId, httpClient);
+                var failedCount = _failedCounter.GetFailedCount(accountId, httpClient);
+                Log(accountId, failedCount);
 
                 _slackNotifyService.Notify(accountId);
 
@@ -110,11 +111,11 @@ namespace DependencyInjectionWorkshop.Models
             }
         }
 
-        private  void LogFailedCount(string accountId, HttpClient httpClient)
+        private static void Log(string accountId, int failedCount)
         {
-            var failedCount = _failedCounter.GetFailedCount(accountId, httpClient);
             var logger = NLog.LogManager.GetCurrentClassLogger();
             logger.Info($"accountId:{accountId} failed times:{failedCount}");
         }
+
     }
 }
