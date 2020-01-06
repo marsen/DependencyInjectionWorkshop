@@ -78,6 +78,7 @@
     <Compile Include="Models\AuthenticationService.cs" />
     <Compile Include="Models\FailedCounter.cs" />
     <Compile Include="Models\FailedTooManyTimesException.cs" />
+    <Compile Include="Models\Interface\ILogger.cs" />
     <Compile Include="Models\Interface\INotify.cs" />
     <Compile Include="Models\Interface\IHash.cs" />
     <Compile Include="Models\Interface\IProfileInfo.cs" />
