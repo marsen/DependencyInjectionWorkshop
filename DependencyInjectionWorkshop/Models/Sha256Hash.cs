@@ -4,12 +4,12 @@ namespace DependencyInjectionWorkshop.Models
 {
     public interface IHash
     {
-        string HashPassword(string password);
+        string Hash(string password);
     }
 
     public class Sha256Hash : IHash
     {
-        public string HashPassword(string password)
+        public string Hash(string password)
         {
             //hash
             var crypt = new System.Security.Cryptography.SHA256Managed();
