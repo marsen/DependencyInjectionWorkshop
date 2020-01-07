@@ -5,7 +5,7 @@ namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService
     {
-        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService, FailedCounter failedCounter)
+        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService, IFailedCounter failedCounter)
         {
             _nLogLogger = new NLogLogger();
             _notify = notify;
@@ -32,7 +32,7 @@ namespace DependencyInjectionWorkshop.Models
         private readonly IProfile _profile;
         private readonly IHash _hash;
         private readonly IOtpService _otpService;
-        private readonly FailedCounter _failedCounter;
+        private readonly IFailedCounter _failedCounter;
         private readonly NLogLogger _nLogLogger;
 
         public bool Verify(string accountId, string password, string otp)
