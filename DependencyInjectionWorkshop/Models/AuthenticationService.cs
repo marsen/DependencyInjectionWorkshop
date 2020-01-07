@@ -5,11 +5,11 @@ namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService
     {
-        public AuthenticationService(SlackNotify slackNotify, Profile profile, Sha256Hash sha256Hash, OtpService otpService, FailedCounter failedCounter)
+        public AuthenticationService(INotify slackNotify, IProfile profile, IHash hash, IOtpService otpService, IFailedCounter failedCounter)
         {
             _slackNotify = slackNotify;
             _profile = profile;
-            _sha256Hash = sha256Hash;
+            _hash = hash;
             _otpService = otpService;
             _failedCounter = failedCounter;
         }
@@ -21,16 +21,16 @@ namespace DependencyInjectionWorkshop.Models
         {
             _slackNotify = new SlackNotify();
             _profile = new Profile();
-            _sha256Hash = new Sha256Hash();
+            _hash = new Sha256Hash();
             _otpService = new OtpService();
             _failedCounter = new FailedCounter();
         }
 
-        private readonly SlackNotify _slackNotify;
-        private readonly Profile _profile;
-        private readonly Sha256Hash _sha256Hash;
-        private readonly OtpService _otpService;
-        private readonly FailedCounter _failedCounter;
+        private readonly INotify _slackNotify;
+        private readonly IProfile _profile;
+        private readonly IHash _hash;
+        private readonly IOtpService _otpService;
+        private readonly IFailedCounter _failedCounter;
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -40,7 +40,7 @@ namespace DependencyInjectionWorkshop.Models
 
             var passwordFromDb = _profile.GetPassword(accountId);
 
-            var hashedPassword = _sha256Hash.HashPassword(password);
+            var hashedPassword = _hash.HashPassword(password);
 
             var currentOtp = _otpService.CurrentOtp(accountId, httpClient);
 
