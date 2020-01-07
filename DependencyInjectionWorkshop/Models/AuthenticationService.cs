@@ -5,9 +5,9 @@ namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService
     {
-        public AuthenticationService(INotify slackNotify, IProfile profile, IHash hash, IOtpService otpService, IFailedCounter failedCounter)
+        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService, IFailedCounter failedCounter)
         {
-            _slackNotify = slackNotify;
+            _notify = notify;
             _profile = profile;
             _hash = hash;
             _otpService = otpService;
@@ -19,14 +19,14 @@ namespace DependencyInjectionWorkshop.Models
         /// </summary>
         public AuthenticationService()
         {
-            _slackNotify = new SlackNotify();
+            _notify = new SlackNotify();
             _profile = new Profile();
             _hash = new Sha256Hash();
             _otpService = new OtpService();
             _failedCounter = new FailedCounter();
         }
 
-        private readonly INotify _slackNotify;
+        private readonly INotify _notify;
         private readonly IProfile _profile;
         private readonly IHash _hash;
         private readonly IOtpService _otpService;
@@ -57,7 +57,7 @@ namespace DependencyInjectionWorkshop.Models
 
                 _failedCounter.LogFailedCount(accountId, httpClient);
 
-                _slackNotify.Notify(accountId);
+                _notify.Notify(accountId);
 
                 return false;
             }
