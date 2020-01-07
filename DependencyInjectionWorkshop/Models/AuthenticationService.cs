@@ -92,8 +92,7 @@ namespace DependencyInjectionWorkshop.Models
             //compare
             if (passwordFromDb == hashedPassword && currentOtp == otp)
             {
-                var resetResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
-                resetResponse.EnsureSuccessStatusCode();
+                ResetFailedCount(accountId, httpClient);
 
                 return true;
             }
@@ -107,6 +106,12 @@ namespace DependencyInjectionWorkshop.Models
 
                 return false;
             }
+        }
+
+        private static void ResetFailedCount(string accountId, HttpClient httpClient)
+        {
+            var resetResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
+            resetResponse.EnsureSuccessStatusCode();
         }
 
         private  void LogFailedCount(string accountId, HttpClient httpClient)
