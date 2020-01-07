@@ -2,7 +2,15 @@
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public class FailedCounter
+    public interface IFailedCounter
+    {
+        void ResetFailedCount(string accountId, HttpClient httpClient);
+        void LogFailedCount(string accountId, HttpClient httpClient);
+        void AddFailedCount(string accountId, HttpClient httpClient);
+        void CheckIsLocked(string accountId, HttpClient httpClient);
+    }
+
+    public class FailedCounter : IFailedCounter
     {
         public void ResetFailedCount(string accountId, HttpClient httpClient)
         {
