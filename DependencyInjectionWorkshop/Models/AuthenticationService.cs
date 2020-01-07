@@ -70,12 +70,22 @@ namespace DependencyInjectionWorkshop.Models
         }
     }
 
+    public class FailedCounter
+    {
+        public void ResetFailedCount(string accountId, HttpClient httpClient)
+        {
+            var resetResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
+            resetResponse.EnsureSuccessStatusCode();
+        }
+    }
+
     public class AuthenticationService
     {
         private readonly SlackNotify _slackNotify = new SlackNotify();
         private readonly Profile _profile = new Profile();
         private readonly SHA256Hash _sha256Hash = new SHA256Hash();
         private readonly OtpService _otpService = new OtpService();
+        private readonly FailedCounter _failedCounter = new FailedCounter();
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -92,7 +102,7 @@ namespace DependencyInjectionWorkshop.Models
             //compare
             if (passwordFromDb == hashedPassword && currentOtp == otp)
             {
-                ResetFailedCount(accountId, httpClient);
+                _failedCounter.ResetFailedCount(accountId, httpClient);
 
                 return true;
             }
@@ -106,12 +116,6 @@ namespace DependencyInjectionWorkshop.Models
 
                 return false;
             }
-        }
-
-        private static void ResetFailedCount(string accountId, HttpClient httpClient)
-        {
-            var resetResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
-            resetResponse.EnsureSuccessStatusCode();
         }
 
         private  void LogFailedCount(string accountId, HttpClient httpClient)
