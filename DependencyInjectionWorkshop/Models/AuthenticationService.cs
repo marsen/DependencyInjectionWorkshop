@@ -30,7 +30,7 @@ namespace DependencyInjectionWorkshop.Models
 
             CheckIsLocked(accountId, httpClient);
 
-            var passwordFromDb = Get(accountId);
+            var passwordFromDb = GetPassword(accountId);
 
             var hashedPassword = HashPassword(password);
 
@@ -56,7 +56,7 @@ namespace DependencyInjectionWorkshop.Models
             }
         }
 
-        private static void LogFailedCount(string accountId, HttpClient httpClient)
+        private  void LogFailedCount(string accountId, HttpClient httpClient)
         {
             //紀錄失敗次數 
             var failedCountResponse =
@@ -104,7 +104,7 @@ namespace DependencyInjectionWorkshop.Models
             return hashedPassword;
         }
 
-        private static string Get(string accountId)
+        private  string GetPassword(string accountId)
         {
             //get password
             string passwordFromDb;
