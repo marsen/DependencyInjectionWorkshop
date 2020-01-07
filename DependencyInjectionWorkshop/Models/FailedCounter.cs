@@ -49,5 +49,17 @@ namespace DependencyInjectionWorkshop.Models
                 throw new FailedTooManyTimesException() {AccountId = accountId};
             }
         }
+
+        public int GetCount(string accountId, HttpClient httpClient)
+        {
+            //紀錄失敗次數 
+            var failedCountResponse =
+                httpClient.PostAsJsonAsync("api/failedCounter/GetFailedCount", accountId).Result;
+
+            failedCountResponse.EnsureSuccessStatusCode();
+
+            var failedCount = failedCountResponse.Content.ReadAsAsync<int>().Result;
+            return failedCount;
+        }
     }
 }

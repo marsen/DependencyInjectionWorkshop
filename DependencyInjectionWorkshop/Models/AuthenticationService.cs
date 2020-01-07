@@ -58,25 +58,13 @@ namespace DependencyInjectionWorkshop.Models
             {
                 _failedCounter.Add(accountId, httpClient);
 
-                var failedCount = GetCount(accountId, httpClient);
+                var failedCount = _failedCounter.GetCount(accountId, httpClient);
                 _nLogLogger.Log($"accountId:{accountId} failed times:{failedCount}");
 
                 _notify.Notify(accountId);
 
                 return false;
             }
-        }
-
-        private static int GetCount(string accountId, HttpClient httpClient)
-        {
-            //紀錄失敗次數 
-            var failedCountResponse =
-                httpClient.PostAsJsonAsync("api/failedCounter/GetFailedCount", accountId).Result;
-
-            failedCountResponse.EnsureSuccessStatusCode();
-
-            var failedCount = failedCountResponse.Content.ReadAsAsync<int>().Result;
-            return failedCount;
         }
     }
 }
