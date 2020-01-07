@@ -5,7 +5,7 @@ namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService
     {
-        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService, IFailedCounter failedCounter)
+        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService, FailedCounter failedCounter)
         {
             _notify = notify;
             _profile = profile;
@@ -30,7 +30,7 @@ namespace DependencyInjectionWorkshop.Models
         private readonly IProfile _profile;
         private readonly IHash _hash;
         private readonly IOtpService _otpService;
-        private readonly IFailedCounter _failedCounter;
+        private readonly FailedCounter _failedCounter;
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -55,12 +55,31 @@ namespace DependencyInjectionWorkshop.Models
             {
                 _failedCounter.Add(accountId, httpClient);
 
-                _failedCounter.LogFailedCount(accountId, httpClient);
+                var failedCount = GetCount(accountId, httpClient);
+                Log($"accountId:{accountId} failed times:{failedCount}");
 
                 _notify.Notify(accountId);
 
                 return false;
             }
+        }
+
+        private static void Log(string message)
+        {
+            var logger = NLog.LogManager.GetCurrentClassLogger();
+            logger.Info(message);
+        }
+
+        private static int GetCount(string accountId, HttpClient httpClient)
+        {
+            //紀錄失敗次數 
+            var failedCountResponse =
+                httpClient.PostAsJsonAsync("api/failedCounter/GetFailedCount", accountId).Result;
+
+            failedCountResponse.EnsureSuccessStatusCode();
+
+            var failedCount = failedCountResponse.Content.ReadAsAsync<int>().Result;
+            return failedCount;
         }
     }
 }
