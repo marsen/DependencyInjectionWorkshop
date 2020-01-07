@@ -54,11 +54,28 @@ namespace DependencyInjectionWorkshop.Models
         }
     }
 
+    public class OtpService
+    {
+        public string CurrentOtp(string accountId, HttpClient httpClient)
+        {
+            //get otp
+            var response = httpClient.PostAsJsonAsync("api/otps", accountId).Result;
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"web api error, accountId:{accountId}");
+            }
+
+            var currentOtp = response.Content.ReadAsAsync<string>().Result;
+            return currentOtp;
+        }
+    }
+
     public class AuthenticationService
     {
         private readonly SlackNotify _slackNotify = new SlackNotify();
         private readonly Profile _profile = new Profile();
         private readonly SHA256Hash _sha256Hash = new SHA256Hash();
+        private readonly OtpService _otpService = new OtpService();
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -70,7 +87,7 @@ namespace DependencyInjectionWorkshop.Models
 
             var hashedPassword = _sha256Hash.HashPassword(password);
 
-            var currentOtp = CurrentOtp(accountId, httpClient);
+            var currentOtp = _otpService.CurrentOtp(accountId, httpClient);
 
             //compare
             if (passwordFromDb == hashedPassword && currentOtp == otp)
@@ -110,19 +127,6 @@ namespace DependencyInjectionWorkshop.Models
             //失敗
             var addFailedCountResponse = httpClient.PostAsJsonAsync("api/failedCounter/Add", accountId).Result;
             addFailedCountResponse.EnsureSuccessStatusCode();
-        }
-
-        private static string CurrentOtp(string accountId, HttpClient httpClient)
-        {
-            //get otp
-            var response = httpClient.PostAsJsonAsync("api/otps", accountId).Result;
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception($"web api error, accountId:{accountId}");
-            }
-
-            var currentOtp = response.Content.ReadAsAsync<string>().Result;
-            return currentOtp;
         }
 
         private  void CheckIsLocked(string accountId, HttpClient httpClient)
