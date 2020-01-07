@@ -5,11 +5,25 @@ namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService
     {
-        private readonly SlackNotify _slackNotify = new SlackNotify();
-        private readonly Profile _profile = new Profile();
-        private readonly Sha256Hash _sha256Hash = new Sha256Hash();
-        private readonly OtpService _otpService = new OtpService();
-        private readonly FailedCounter _failedCounter = new FailedCounter();
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthenticationService" /> class.
+        /// </summary>
+        public AuthenticationService()
+        {
+            
+        _slackNotify = new SlackNotify();
+        _profile = new Profile();
+        _sha256Hash = new Sha256Hash();
+        _otpService = new OtpService();
+        _failedCounter = new FailedCounter();
+
+        }
+
+        private readonly SlackNotify _slackNotify;
+        private readonly Profile _profile;
+        private readonly Sha256Hash _sha256Hash;
+        private readonly OtpService _otpService;
+        private readonly FailedCounter _failedCounter;
 
         public bool Verify(string accountId, string password, string otp)
         {
