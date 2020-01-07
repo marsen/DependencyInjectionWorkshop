@@ -90,6 +90,13 @@ namespace DependencyInjectionWorkshop.Models
             var logger = NLog.LogManager.GetCurrentClassLogger();
             logger.Info($"accountId:{accountId} failed times:{failedCount}");
         }
+
+        public void AddFailedCount(string accountId, HttpClient httpClient)
+        {
+            //失敗
+            var addFailedCountResponse = httpClient.PostAsJsonAsync("api/failedCounter/Add", accountId).Result;
+            addFailedCountResponse.EnsureSuccessStatusCode();
+        }
     }
 
     public class AuthenticationService
@@ -121,7 +128,7 @@ namespace DependencyInjectionWorkshop.Models
             }
             else
             {
-                AddFailedCount(accountId, httpClient);
+                _failedCounter.AddFailedCount(accountId, httpClient);
 
                 _failedCounter.LogFailedCount(accountId, httpClient);
 
@@ -129,13 +136,6 @@ namespace DependencyInjectionWorkshop.Models
 
                 return false;
             }
-        }
-
-        private static void AddFailedCount(string accountId, HttpClient httpClient)
-        {
-            //失敗
-            var addFailedCountResponse = httpClient.PostAsJsonAsync("api/failedCounter/Add", accountId).Result;
-            addFailedCountResponse.EnsureSuccessStatusCode();
         }
 
         private  void CheckIsLocked(string accountId, HttpClient httpClient)
