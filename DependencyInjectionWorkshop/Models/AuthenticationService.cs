@@ -12,20 +12,18 @@ namespace DependencyInjectionWorkshop.Models
             _sha256Hash = sha256Hash;
             _otpService = otpService;
             _failedCounter = failedCounter;
-
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationService" /> class.
         /// </summary>
         public AuthenticationService()
         {
-            
-        _slackNotify = new SlackNotify();
-        _profile = new Profile();
-        _sha256Hash = new Sha256Hash();
-        _otpService = new OtpService();
-        _failedCounter = new FailedCounter();
-
+            _slackNotify = new SlackNotify();
+            _profile = new Profile();
+            _sha256Hash = new Sha256Hash();
+            _otpService = new OtpService();
+            _failedCounter = new FailedCounter();
         }
 
         private readonly SlackNotify _slackNotify;
