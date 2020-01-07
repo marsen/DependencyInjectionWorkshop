@@ -5,14 +5,14 @@ namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService
     {
-        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService, IFailedCounter failedCounter)
+        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService, IFailedCounter failedCounter,ILogger logger)
         {
-            _nLogLogger = new NLogLogger();
             _notify = notify;
             _profile = profile;
             _hash = hash;
             _otpService = otpService;
             _failedCounter = failedCounter;
+            _logger = logger;
         }
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace DependencyInjectionWorkshop.Models
         /// </summary>
         public AuthenticationService()
         {
-            _nLogLogger = new NLogLogger();
+            _logger = new NLogLogger();
             _notify = new SlackNotify();
             _profile = new Profile();
             _hash = new Sha256Hash();
@@ -33,7 +33,7 @@ namespace DependencyInjectionWorkshop.Models
         private readonly IHash _hash;
         private readonly IOtpService _otpService;
         private readonly IFailedCounter _failedCounter;
-        private readonly NLogLogger _nLogLogger;
+        private readonly ILogger _logger;
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -59,7 +59,7 @@ namespace DependencyInjectionWorkshop.Models
                 _failedCounter.Add(accountId, httpClient);
 
                 var failedCount = _failedCounter.GetCount(accountId, httpClient);
-                _nLogLogger.Log($"accountId:{accountId} failed times:{failedCount}");
+                _logger.Log($"accountId:{accountId} failed times:{failedCount}");
 
                 _notify.Notify(accountId);
 
