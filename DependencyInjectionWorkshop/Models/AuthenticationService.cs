@@ -20,9 +20,26 @@ namespace DependencyInjectionWorkshop.Models
         }
     }
 
+    public class Profile
+    {
+        public string GetPassword(string accountId)
+        {
+            //get password
+            string passwordFromDb;
+            using (var connection = new SqlConnection("my connection string"))
+            {
+                passwordFromDb = connection.Query<string>("spGetUserPassword", new {Id = accountId},
+                    commandType: CommandType.StoredProcedure).SingleOrDefault();
+            }
+
+            return passwordFromDb;
+        }
+    }
+
     public class AuthenticationService
     {
         private readonly SlackNotify _slackNotify = new SlackNotify();
+        private readonly Profile _profile = new Profile();
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -30,7 +47,7 @@ namespace DependencyInjectionWorkshop.Models
 
             CheckIsLocked(accountId, httpClient);
 
-            var passwordFromDb = GetPassword(accountId);
+            var passwordFromDb = _profile.GetPassword(accountId);
 
             var hashedPassword = HashPassword(password);
 
@@ -102,19 +119,6 @@ namespace DependencyInjectionWorkshop.Models
 
             var hashedPassword = hash.ToString();
             return hashedPassword;
-        }
-
-        private  string GetPassword(string accountId)
-        {
-            //get password
-            string passwordFromDb;
-            using (var connection = new SqlConnection("my connection string"))
-            {
-                passwordFromDb = connection.Query<string>("spGetUserPassword", new {Id = accountId},
-                    commandType: CommandType.StoredProcedure).SingleOrDefault();
-            }
-
-            return passwordFromDb;
         }
 
         private  void CheckIsLocked(string accountId, HttpClient httpClient)
