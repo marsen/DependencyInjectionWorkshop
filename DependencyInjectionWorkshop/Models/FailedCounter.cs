@@ -5,9 +5,9 @@ namespace DependencyInjectionWorkshop.Models
     public interface IFailedCounter
     {
         void Reset(string accountId, HttpClient httpClient);
-        void LogFailedCount(string accountId, HttpClient httpClient);
         void Add(string accountId, HttpClient httpClient);
         void IsLocked(string accountId, HttpClient httpClient);
+        int GetCount(string accountId, HttpClient httpClient);
     }
 
     public class FailedCounter : IFailedCounter
@@ -16,19 +16,6 @@ namespace DependencyInjectionWorkshop.Models
         {
             var resetResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
             resetResponse.EnsureSuccessStatusCode();
-        }
-
-        public void LogFailedCount(string accountId, HttpClient httpClient)
-        {
-            //紀錄失敗次數 
-            var failedCountResponse =
-                httpClient.PostAsJsonAsync("api/failedCounter/GetFailedCount", accountId).Result;
-
-            failedCountResponse.EnsureSuccessStatusCode();
-
-            var failedCount = failedCountResponse.Content.ReadAsAsync<int>().Result;
-            var logger = NLog.LogManager.GetCurrentClassLogger();
-            logger.Info($"accountId:{accountId} failed times:{failedCount}");
         }
 
         public void Add(string accountId, HttpClient httpClient)
