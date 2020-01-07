@@ -4,15 +4,15 @@ namespace DependencyInjectionWorkshop.Models
 {
     public interface IFailedCounter
     {
-        void ResetFailedCount(string accountId, HttpClient httpClient);
+        void Reset(string accountId, HttpClient httpClient);
         void LogFailedCount(string accountId, HttpClient httpClient);
-        void AddFailedCount(string accountId, HttpClient httpClient);
-        void CheckIsLocked(string accountId, HttpClient httpClient);
+        void Add(string accountId, HttpClient httpClient);
+        void IsLocked(string accountId, HttpClient httpClient);
     }
 
     public class FailedCounter : IFailedCounter
     {
-        public void ResetFailedCount(string accountId, HttpClient httpClient)
+        public void Reset(string accountId, HttpClient httpClient)
         {
             var resetResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
             resetResponse.EnsureSuccessStatusCode();
@@ -31,14 +31,14 @@ namespace DependencyInjectionWorkshop.Models
             logger.Info($"accountId:{accountId} failed times:{failedCount}");
         }
 
-        public void AddFailedCount(string accountId, HttpClient httpClient)
+        public void Add(string accountId, HttpClient httpClient)
         {
             //失敗
             var addFailedCountResponse = httpClient.PostAsJsonAsync("api/failedCounter/Add", accountId).Result;
             addFailedCountResponse.EnsureSuccessStatusCode();
         }
 
-        public void CheckIsLocked(string accountId, HttpClient httpClient)
+        public void IsLocked(string accountId, HttpClient httpClient)
         {
             //check account locked
             var isLockedResponse = httpClient.PostAsJsonAsync("api/failedCounter/IsLocked", accountId).Result;

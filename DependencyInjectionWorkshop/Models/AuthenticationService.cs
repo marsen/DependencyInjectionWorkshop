@@ -36,7 +36,7 @@ namespace DependencyInjectionWorkshop.Models
         {
             var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
 
-            _failedCounter.CheckIsLocked(accountId, httpClient);
+            _failedCounter.IsLocked(accountId, httpClient);
 
             var passwordFromDb = _profile.GetPassword(accountId);
 
@@ -47,13 +47,13 @@ namespace DependencyInjectionWorkshop.Models
             //compare
             if (passwordFromDb == hashedPassword && currentOtp == otp)
             {
-                _failedCounter.ResetFailedCount(accountId, httpClient);
+                _failedCounter.Reset(accountId, httpClient);
 
                 return true;
             }
             else
             {
-                _failedCounter.AddFailedCount(accountId, httpClient);
+                _failedCounter.Add(accountId, httpClient);
 
                 _failedCounter.LogFailedCount(accountId, httpClient);
 
