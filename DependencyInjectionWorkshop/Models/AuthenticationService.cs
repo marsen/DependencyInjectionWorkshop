@@ -5,6 +5,15 @@ namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService
     {
+        public AuthenticationService(SlackNotify slackNotify, Profile profile, Sha256Hash sha256Hash, OtpService otpService, FailedCounter failedCounter)
+        {
+            _slackNotify = slackNotify;
+            _profile = profile;
+            _sha256Hash = sha256Hash;
+            _otpService = otpService;
+            _failedCounter = failedCounter;
+
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationService" /> class.
         /// </summary>
