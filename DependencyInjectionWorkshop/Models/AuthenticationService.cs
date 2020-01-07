@@ -36,10 +36,29 @@ namespace DependencyInjectionWorkshop.Models
         }
     }
 
+    public class SHA256Hash
+    {
+        public string HashPassword(string password)
+        {
+            //hash
+            var crypt = new System.Security.Cryptography.SHA256Managed();
+            var hash = new StringBuilder();
+            var crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(password));
+            foreach (var theByte in crypto)
+            {
+                hash.Append(theByte.ToString("x2"));
+            }
+
+            var hashedPassword = hash.ToString();
+            return hashedPassword;
+        }
+    }
+
     public class AuthenticationService
     {
         private readonly SlackNotify _slackNotify = new SlackNotify();
         private readonly Profile _profile = new Profile();
+        private readonly SHA256Hash _sha256Hash = new SHA256Hash();
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -49,7 +68,7 @@ namespace DependencyInjectionWorkshop.Models
 
             var passwordFromDb = _profile.GetPassword(accountId);
 
-            var hashedPassword = HashPassword(password);
+            var hashedPassword = _sha256Hash.HashPassword(password);
 
             var currentOtp = CurrentOtp(accountId, httpClient);
 
@@ -104,21 +123,6 @@ namespace DependencyInjectionWorkshop.Models
 
             var currentOtp = response.Content.ReadAsAsync<string>().Result;
             return currentOtp;
-        }
-
-        private static string HashPassword(string password)
-        {
-            //hash
-            var crypt = new System.Security.Cryptography.SHA256Managed();
-            var hash = new StringBuilder();
-            var crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(password));
-            foreach (var theByte in crypto)
-            {
-                hash.Append(theByte.ToString("x2"));
-            }
-
-            var hashedPassword = hash.ToString();
-            return hashedPassword;
         }
 
         private  void CheckIsLocked(string accountId, HttpClient httpClient)
