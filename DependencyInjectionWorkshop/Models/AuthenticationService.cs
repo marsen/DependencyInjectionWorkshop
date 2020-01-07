@@ -9,8 +9,20 @@ using SlackAPI;
 
 namespace DependencyInjectionWorkshop.Models
 {
+    public class SlackNotify
+    {
+        public void Notify(string accountId)
+        {
+            //notify
+            string message = $"account:{accountId} try to login failed";
+            var slackClient = new SlackClient("my api token");
+            slackClient.PostMessage(messageResponse => { }, "my channel", message, "my bot name");
+        }
+    }
+
     public class AuthenticationService
     {
+        private readonly SlackNotify _slackNotify = new SlackNotify();
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -38,18 +50,10 @@ namespace DependencyInjectionWorkshop.Models
 
                 LogFailedCount(accountId, httpClient);
 
-                Notify(accountId);
+                _slackNotify.Notify(accountId);
 
                 return false;
             }
-        }
-
-        private static void Notify(string accountId)
-        {
-            //notify
-            string message = $"account:{accountId} try to login failed";
-            var slackClient = new SlackClient("my api token");
-            slackClient.PostMessage(messageResponse => { }, "my channel", message, "my bot name");
         }
 
         private static void LogFailedCount(string accountId, HttpClient httpClient)
