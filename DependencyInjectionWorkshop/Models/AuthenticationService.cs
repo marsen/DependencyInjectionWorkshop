@@ -37,28 +37,26 @@ namespace DependencyInjectionWorkshop.Models
 
         public bool Verify(string accountId, string password, string otp)
         {
-            var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
-
-            _failedCounter.IsLocked(accountId, httpClient);
+            _failedCounter.IsLocked(accountId);
 
             var passwordFromDb = _profile.GetPassword(accountId);
 
             var hashedPassword = _hash.Hash(password);
 
-            var currentOtp = _otpService.CurrentOtp(accountId, httpClient);
+            var currentOtp = _otpService.CurrentOtp(accountId);
 
             //compare
             if (passwordFromDb == hashedPassword && currentOtp == otp)
             {
-                _failedCounter.Reset(accountId, httpClient);
+                _failedCounter.Reset(accountId);
 
                 return true;
             }
             else
             {
-                _failedCounter.Add(accountId, httpClient);
+                _failedCounter.Add(accountId);
 
-                var failedCount = _failedCounter.GetCount(accountId, httpClient);
+                var failedCount = _failedCounter.GetCount(accountId);
                 _logger.Log($"accountId:{accountId} failed times:{failedCount}");
 
                 _notify.Notify(accountId);

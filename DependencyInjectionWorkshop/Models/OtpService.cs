@@ -5,15 +5,15 @@ namespace DependencyInjectionWorkshop.Models
 {
     public interface IOtpService
     {
-        string CurrentOtp(string accountId, HttpClient httpClient);
+        string CurrentOtp(string accountId);
     }
 
     public class OtpService : IOtpService
     {
-        public string CurrentOtp(string accountId, HttpClient httpClient)
+        public string CurrentOtp(string accountId)
         {
             //get otp
-            var response = httpClient.PostAsJsonAsync("api/otps", accountId).Result;
+            var response = new HttpClient() { BaseAddress = new Uri("http://joey.com/") }.PostAsJsonAsync("api/otps", accountId).Result;
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception($"web api error, accountId:{accountId}");
