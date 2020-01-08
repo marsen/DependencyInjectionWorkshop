@@ -8,17 +8,34 @@ namespace DependencyInjectionWorkshopTests
     [TestFixture]
     public class AuthenticationServiceTests
     {
+        private ILogger _logger;
+        private IFailedCounter _failedCounter;
+        private IOtpService _otpService;
+        private IHash _hash;
+        private INotify _notify;
+        private IProfile _profile;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthenticationServiceTests" /> class.
+        /// </summary>
+        public AuthenticationServiceTests()
+        {
+            _logger = Substitute.For<ILogger>();
+            _failedCounter = Substitute.For<IFailedCounter>();
+            _otpService = Substitute.For<IOtpService>();
+            _hash = Substitute.For<IHash>();
+            _notify = Substitute.For<INotify>();
+            _profile = Substitute.For<IProfile>();
+        }
+
         [Test]
         public void is_valid()
         {
-            ILogger logger = Substitute.For<ILogger>();
-            IFailedCounter failedCounter = Substitute.For<IFailedCounter>();
-            IOtpService otpService = Substitute.For<IOtpService>();
-            IHash hash = Substitute.For<IHash>();
-            INotify notify = Substitute.For<INotify>();
-            IProfile profile = Substitute.For<IProfile>();
+            _profile.GetPassword("marsen").Returns("hashed password");
+            _otpService.CurrentOtp("marsen").Returns("OTP");
+            _hash.Hash("password").Returns("hashed password");
             var authenticationService =
-                new AuthenticationService(notify, profile, hash, otpService, failedCounter, logger);
+                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
             var result = authenticationService.Verify("marsen", "password", "OTP");
             Assert.IsTrue(result);
         }
