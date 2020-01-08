@@ -39,5 +39,17 @@ namespace DependencyInjectionWorkshopTests
             var result = authenticationService.Verify("marsen", "password", "OTP");
             Assert.IsTrue(result);
         }
+
+        [Test]
+        public void is_invalid()
+        {
+            _profile.GetPassword("marsen").Returns("hashed password");
+            _otpService.CurrentOtp("marsen").Returns("Error OTP");
+            _hash.Hash("password").Returns("hashed password");
+            var authenticationService =
+                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
+            var result = authenticationService.Verify("marsen", "password", "OTP");
+            Assert.IsFalse(result);
+        }
     }
 }
