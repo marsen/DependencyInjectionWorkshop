@@ -1,11 +1,8 @@
-﻿using System;
-using System.Net.Http;
-
-namespace DependencyInjectionWorkshop.Models
+﻿namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService
     {
-        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService, IFailedCounter failedCounter,ILogger logger)
+        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService, IFailedCounter failedCounter, ILogger logger)
         {
             _notify = notify;
             _profile = profile;
@@ -59,7 +56,7 @@ namespace DependencyInjectionWorkshop.Models
                 var failedCount = _failedCounter.GetCount(accountId);
                 _logger.Log($"accountId:{accountId} failed times:{failedCount}");
 
-                _notify.Notify(accountId);
+                _notify.Notify($"account:{accountId} try to login failed");
 
                 return false;
             }

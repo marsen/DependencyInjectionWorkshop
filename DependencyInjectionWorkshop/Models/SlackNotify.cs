@@ -4,15 +4,14 @@ namespace DependencyInjectionWorkshop.Models
 {
     public interface INotify
     {
-        void Notify(string accountId);
+        void Notify(string message);
     }
 
     public class SlackNotify : INotify
     {
-        public void Notify(string accountId)
+        public void Notify(string message)
         {
             //notify
-            string message = $"account:{accountId} try to login failed";
             var slackClient = new SlackClient("my api token");
             slackClient.PostMessage(messageResponse => { }, "my channel", message, "my bot name");
         }
