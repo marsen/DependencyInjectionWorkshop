@@ -34,22 +34,48 @@ namespace DependencyInjectionWorkshopTests
             _profile.GetPassword("marsen").Returns("hashed password");
             _otpService.CurrentOtp("marsen").Returns("OTP");
             _hash.Hash("password").Returns("hashed password");
-            var authenticationService =
-                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            var result = authenticationService.Verify("marsen", "password", "OTP");
-            Assert.IsTrue(result);
+            ShouldBeValid();
         }
+
 
         [Test]
         public void is_invalid()
         {
-            _profile.GetPassword("marsen").Returns("hashed password");
-            _otpService.CurrentOtp("marsen").Returns("Error OTP");
-            _hash.Hash("password").Returns("hashed password");
+            GivenPasswordFromDb("marsen", "hashed password");
+            GivenOneTimePassword("marsen", "Error OTP");
+            GivenHashedPassword("password", "hashed password");
+            ShouldBeInvalid();
+        }
+
+        private void GivenHashedPassword(string password, string hashedPassword)
+        {
+            _hash.Hash(password).Returns(hashedPassword);
+        }
+
+        private void GivenOneTimePassword(string accountId, string OTP)
+        {
+            _otpService.CurrentOtp(accountId).Returns(OTP);
+        }
+
+        private void GivenPasswordFromDb(string accountId, string password)
+        {
+            _profile.GetPassword(accountId).Returns(password);
+        }
+
+        private void ShouldBeInvalid()
+        {
             var authenticationService =
                 new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
             var result = authenticationService.Verify("marsen", "password", "OTP");
             Assert.IsFalse(result);
+        }
+
+        private void ShouldBeValid()
+        {
+            var authenticationService =
+                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
+            var result = authenticationService.Verify("marsen", "password", "OTP");
+            Assert.IsTrue(result);
         }
     }
 }
