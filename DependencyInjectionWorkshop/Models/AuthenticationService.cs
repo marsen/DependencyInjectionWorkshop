@@ -39,8 +39,8 @@
 
     public class NotifyDecorator : IAuthenticationService
     {
-        private IAuthenticationService _authenticationService;
-        private INotify _notify;
+        private readonly IAuthenticationService _authenticationService;
+        private readonly INotify _notify;
 
         public NotifyDecorator(IAuthenticationService authenticationService, INotify notify)
         {
@@ -67,11 +67,9 @@
 
     public class AuthenticationService : IAuthenticationService
     {
-        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService,
+        public AuthenticationService(IProfile profile, IHash hash, IOtpService otpService,
             IFailedCounter failedCounter)
         {
-            //_notifyDecorator = new NotifyDecorator(this);
-            _notify = notify;
             _profile = profile;
             _hash = hash;
             _otpService = otpService;
@@ -83,20 +81,16 @@
         /// </summary>
         public AuthenticationService()
         {
-            //_notifyDecorator = new NotifyDecorator(this);
-            _notify = new SlackNotify();
             _profile = new Profile();
             _hash = new Sha256Hash();
             _otpService = new OtpService();
             _failedCounter = new FailedCounter();
         }
 
-        private readonly INotify _notify;
         private readonly IProfile _profile;
         private readonly IHash _hash;
         private readonly IOtpService _otpService;
         private readonly IFailedCounter _failedCounter;
-        private readonly NotifyDecorator _notifyDecorator;
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -122,8 +116,6 @@
             else
             {
                 _failedCounter.Add(accountId);
-
-                //_notifyDecorator.Notify(accountId);
 
                 return false;
             }
