@@ -16,7 +16,7 @@ namespace DependencyInjectionWorkshopTests
         private INotify _notify;
         private IProfile _profile;
         private string DefaultTestAccount = "marsen";
-        private AuthenticationService _authenticationService;
+        private IAuthenticationService _authenticationService;
 
         [SetUp]
         public void SetUp()
@@ -28,7 +28,9 @@ namespace DependencyInjectionWorkshopTests
             _notify = Substitute.For<INotify>();
             _profile = Substitute.For<IProfile>();
             _authenticationService =
-                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
+                new LoggerDecorator(
+                    new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger), _logger,
+                    _failedCounter);
         }
 
         [Test]

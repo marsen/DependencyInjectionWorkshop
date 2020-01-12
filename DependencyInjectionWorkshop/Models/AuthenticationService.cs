@@ -5,11 +5,44 @@
         bool Verify(string accountId, string password, string otp);
     }
 
+    public class LoggerDecorator : IAuthenticationService
+    {
+        private readonly IAuthenticationService _authenticationService;
+        private readonly ILogger _logger;
+        private readonly IFailedCounter _failedCounter;
+
+        public LoggerDecorator(IAuthenticationService authenticationService, ILogger logger,
+            IFailedCounter failedCounter)
+        {
+            _authenticationService = authenticationService;
+            _logger = logger;
+            _failedCounter = failedCounter;
+        }
+
+        public void Log(string accountId)
+        {
+            var failedCount = _failedCounter.GetCount(accountId);
+            _logger.Log($"accountId:{accountId} failed times:{failedCount}");
+        }
+
+        public bool Verify(string accountId, string password, string otp)
+        {
+            var result = _authenticationService.Verify(accountId, password, otp);
+            if (result == false)
+            {
+                Log(accountId);
+            }
+
+            return result;
+        }
+    }
+
     public class AuthenticationService : IAuthenticationService
     {
         public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService,
             IFailedCounter failedCounter, ILogger logger)
         {
+            //_loggerDecorator = new LoggerDecorator(this);
             _notify = notify;
             _profile = profile;
             _hash = hash;
@@ -23,6 +56,7 @@
         /// </summary>
         public AuthenticationService()
         {
+            //_loggerDecorator = new LoggerDecorator(this);
             _logger = new NLogLogger();
             _notify = new SlackNotify();
             _profile = new Profile();
@@ -37,6 +71,7 @@
         private readonly IOtpService _otpService;
         private readonly IFailedCounter _failedCounter;
         private readonly ILogger _logger;
+        private readonly LoggerDecorator _loggerDecorator;
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -63,8 +98,8 @@
             {
                 _failedCounter.Add(accountId);
 
-                var failedCount = _failedCounter.GetCount(accountId);
-                _logger.Log($"accountId:{accountId} failed times:{failedCount}");
+
+                //_loggerDecorator.Log(accountId);
 
                 _notify.Notify($"account:{accountId} try to login failed");
 
