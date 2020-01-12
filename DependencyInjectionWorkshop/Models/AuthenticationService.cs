@@ -37,11 +37,40 @@
         }
     }
 
+    public class NotifyDecorator : IAuthenticationService
+    {
+        private IAuthenticationService _authenticationService;
+        private INotify _notify;
+
+        public NotifyDecorator(IAuthenticationService authenticationService, INotify notify)
+        {
+            _authenticationService = authenticationService;
+            _notify = notify;
+        }
+
+        private void Notify(string accountId)
+        {
+            _notify.Notify($"account:{accountId} try to login failed");
+        }
+
+        public bool Verify(string accountId, string password, string otp)
+        {
+            var result = _authenticationService.Verify(accountId, password, otp);
+            if (result == false)
+            {
+                Notify(accountId);
+            }
+
+            return result;
+        }
+    }
+
     public class AuthenticationService : IAuthenticationService
     {
         public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService,
             IFailedCounter failedCounter)
         {
+            //_notifyDecorator = new NotifyDecorator(this);
             _notify = notify;
             _profile = profile;
             _hash = hash;
@@ -54,6 +83,7 @@
         /// </summary>
         public AuthenticationService()
         {
+            //_notifyDecorator = new NotifyDecorator(this);
             _notify = new SlackNotify();
             _profile = new Profile();
             _hash = new Sha256Hash();
@@ -66,6 +96,7 @@
         private readonly IHash _hash;
         private readonly IOtpService _otpService;
         private readonly IFailedCounter _failedCounter;
+        private readonly NotifyDecorator _notifyDecorator;
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -92,7 +123,7 @@
             {
                 _failedCounter.Add(accountId);
 
-                _notify.Notify($"account:{accountId} try to login failed");
+                //_notifyDecorator.Notify(accountId);
 
                 return false;
             }
