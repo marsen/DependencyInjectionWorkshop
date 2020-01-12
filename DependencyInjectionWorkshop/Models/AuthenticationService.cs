@@ -35,7 +35,11 @@
 
         public bool Verify(string accountId, string password, string otp)
         {
-            _failedCounter.IsLocked(accountId);
+            var isLocked = _failedCounter.IsLocked(accountId);
+            if (isLocked)
+            {
+                throw new FailedTooManyTimesException() {AccountId = accountId};
+            }
 
             var passwordFromDb = _profile.GetPassword(accountId);
 

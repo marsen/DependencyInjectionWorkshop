@@ -70,6 +70,28 @@ namespace DependencyInjectionWorkshopTests
             ShouldReset();
         }
 
+        [Test]
+        public void when_account_locked_throw_exception()
+        {
+            GivenAccountIsLocked();
+            ShouldThrowException();
+        }
+
+        private void ShouldThrowException()
+        {
+            var authenticationService =
+                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
+            TestDelegate code = () => authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+
+            Assert.Throws<FailedTooManyTimesException>(code);
+        }
+
+        private void GivenAccountIsLocked()
+        {
+            _failedCounter.IsLocked(DefaultTestAccount).Returns(true);
+        }
+
+
         private void ShouldReset()
         {
             var authenticationService =
