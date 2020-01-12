@@ -109,9 +109,7 @@ namespace DependencyInjectionWorkshopTests
 
         private void ShouldLog()
         {
-            var authenticationService =
-                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+            var result = _authenticationService.Verify(DefaultTestAccount, "password", "OTP");
             _failedCounter.Received(1).GetCount(DefaultTestAccount);
             _logger.Received(1).Log(Arg.Is<string>(s => s.Contains(DefaultTestAccount)));
         }
