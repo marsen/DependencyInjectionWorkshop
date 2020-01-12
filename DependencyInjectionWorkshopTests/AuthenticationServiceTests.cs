@@ -15,8 +15,8 @@ namespace DependencyInjectionWorkshopTests
         private IHash _hash;
         private INotify _notify;
         private IProfile _profile;
-        private string DefaultTestAccount = "marsen";
         private IAuthenticationService _authenticationService;
+        private string DefaultTestAccount = "marsen";
 
         [SetUp]
         public void SetUp()
