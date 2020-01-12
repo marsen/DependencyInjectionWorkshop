@@ -27,13 +27,19 @@
         private readonly IOtpService _otpService;
         private readonly IFailedCounter _failedCounter;
 
+        public IFailedCounter FailedCounter
+        {
+            get { return _failedCounter; }
+        }
+
+        //public IFailedCounter FailedCounter
+        //{
+        //    get { return _failedCounter; }
+        //}
+
         public bool Verify(string accountId, string password, string otp)
         {
-            var isLocked = _failedCounter.IsLocked(accountId);
-            if (isLocked)
-            {
-                throw new FailedTooManyTimesException() {AccountId = accountId};
-            }
+            //failedCountDecorator.CheckLocked(accountId, this);
 
             var passwordFromDb = _profile.GetPassword(accountId);
 
@@ -44,8 +50,6 @@
             //compare
             if (passwordFromDb == hashedPassword && currentOtp == otp)
             {
-                _failedCounter.Reset(accountId);
-
                 return true;
             }
             else
@@ -53,5 +57,7 @@
                 return false;
             }
         }
+
+        private FailedCountDecorator failedCountDecorator;
     }
 }
