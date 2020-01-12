@@ -15,13 +15,6 @@ namespace DependencyInjectionWorkshopTests
         private INotify _notify;
         private IProfile _profile;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AuthenticationServiceTests" /> class.
-        /// </summary>
-        public AuthenticationServiceTests()
-        {
-        }
-
         [SetUp]
         public void SetUp()
         {
