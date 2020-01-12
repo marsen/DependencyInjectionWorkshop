@@ -49,22 +49,33 @@ namespace DependencyInjectionWorkshopTests
         [Test]
         public void is_invalid_should_add_failed_count()
         {
-            GivenPasswordFromDb(DefaultTestAccount, "hashed password");
-            GivenOneTimePassword(DefaultTestAccount, "Error OTP");
-            GivenHashedPassword("password", "hashed password");
+            //GivenPasswordFromDb(DefaultTestAccount, "hashed password");
+            //GivenOneTimePassword(DefaultTestAccount, "Error OTP");
+            //GivenHashedPassword("password", "hashed password");
+            WhenInvalid();
             ShouldAddFailedCount();
         }
 
         [Test]
         public void is_invalid_should_notify()
         {
-            GivenPasswordFromDb(DefaultTestAccount, "hashed password");
-            GivenOneTimePassword(DefaultTestAccount, "Error OTP");
-            GivenHashedPassword("password", "hashed password");
+            WhenInvalid();
+            ShouldNotify();
+        }
+
+        private void ShouldNotify()
+        {
             var authenticationService =
                 new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
             var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
-            _notify.Received(1).Notify(Arg.Is<string>(s=>s.Contains(DefaultTestAccount)));
+            _notify.Received(1).Notify(Arg.Is<string>(s => s.Contains(DefaultTestAccount)));
+        }
+
+        protected virtual void WhenInvalid()
+        {
+            GivenPasswordFromDb(DefaultTestAccount, "hashed password");
+            GivenOneTimePassword(DefaultTestAccount, "Error OTP");
+            GivenHashedPassword("password", "hashed password");
         }
 
 
