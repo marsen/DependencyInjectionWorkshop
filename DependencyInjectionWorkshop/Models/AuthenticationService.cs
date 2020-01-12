@@ -5,14 +5,14 @@
         bool Verify(string accountId, string password, string otp);
     }
 
-    public class LoggerDecorator : IAuthenticationService
+    public class LoggerDecorator : AuthenticationDecoratorBase
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly ILogger _logger;
         private readonly IFailedCounter _failedCounter;
 
         public LoggerDecorator(IAuthenticationService authenticationService, ILogger logger,
-            IFailedCounter failedCounter)
+            IFailedCounter failedCounter) : base(authenticationService)
         {
             _authenticationService = authenticationService;
             _logger = logger;
@@ -25,9 +25,9 @@
             _logger.Log($"accountId:{accountId} failed times:{failedCount}");
         }
 
-        public bool Verify(string accountId, string password, string otp)
+        public override bool Verify(string accountId, string password, string otp)
         {
-            var result = _authenticationService.Verify(accountId, password, otp);
+            var result = base.Verify(accountId, password, otp);
             if (result == false)
             {
                 Log(accountId);
@@ -37,14 +37,30 @@
         }
     }
 
-    public class NotifyDecorator : IAuthenticationService
+    public class AuthenticationDecoratorBase : IAuthenticationService
     {
         private readonly IAuthenticationService _authenticationService;
-        private readonly INotify _notify;
 
-        public NotifyDecorator(IAuthenticationService authenticationService, INotify notify)
+        public AuthenticationDecoratorBase(IAuthenticationService authenticationService)
         {
             _authenticationService = authenticationService;
+        }
+
+        public virtual bool Verify(string accountId, string password, string otp)
+        {
+            var result = _authenticationService.Verify(accountId, password, otp);
+
+            return result;
+        }
+    }
+
+    public class NotifyDecorator : AuthenticationDecoratorBase
+    {
+        private readonly INotify _notify;
+
+        public NotifyDecorator(IAuthenticationService authenticationService, INotify notify) : base(
+            authenticationService)
+        {
             _notify = notify;
         }
 
@@ -53,9 +69,9 @@
             _notify.Notify($"account:{accountId} try to login failed");
         }
 
-        public bool Verify(string accountId, string password, string otp)
+        public override bool Verify(string accountId, string password, string otp)
         {
-            var result = _authenticationService.Verify(accountId, password, otp);
+            var result = base.Verify(accountId, password, otp);
             if (result == false)
             {
                 Notify(accountId);
