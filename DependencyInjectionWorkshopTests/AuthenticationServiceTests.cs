@@ -139,9 +139,7 @@ namespace DependencyInjectionWorkshopTests
 
         private void ShouldAddFailedCount()
         {
-            var authenticationService =
-                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+            var result = _authenticationService.Verify(DefaultTestAccount, "password", "OTP");
             _failedCounter.Received(1).Add(DefaultTestAccount);
         }
 
@@ -162,17 +160,13 @@ namespace DependencyInjectionWorkshopTests
 
         private void ShouldBeInvalid()
         {
-            var authenticationService =
-                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+            var result = _authenticationService.Verify(DefaultTestAccount, "password", "OTP");
             Assert.IsFalse(result);
         }
 
         private void ShouldBeValid()
         {
-            var authenticationService =
-                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+            var result = _authenticationService.Verify(DefaultTestAccount, "password", "OTP");
             Assert.IsTrue(result);
         }
     }
