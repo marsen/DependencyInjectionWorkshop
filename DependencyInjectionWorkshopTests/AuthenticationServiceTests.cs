@@ -107,7 +107,7 @@ namespace DependencyInjectionWorkshopTests
             _failedCounter.Received(1).Reset(DefaultTestAccount);
         }
 
-        protected virtual void ShouldLog()
+        private void ShouldLog()
         {
             var authenticationService =
                 new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
