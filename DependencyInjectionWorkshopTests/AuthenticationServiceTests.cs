@@ -28,7 +28,7 @@ namespace DependencyInjectionWorkshopTests
             _notify = Substitute.For<INotify>();
             _profile = Substitute.For<IProfile>();
             _authenticationService =
-                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
+                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter);
             _authenticationService = new LoggerDecorator(
                 _authenticationService,
                 _logger,

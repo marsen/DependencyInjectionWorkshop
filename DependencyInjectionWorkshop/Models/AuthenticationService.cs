@@ -40,15 +40,13 @@
     public class AuthenticationService : IAuthenticationService
     {
         public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService,
-            IFailedCounter failedCounter, ILogger logger)
+            IFailedCounter failedCounter)
         {
-            //_loggerDecorator = new LoggerDecorator(this);
             _notify = notify;
             _profile = profile;
             _hash = hash;
             _otpService = otpService;
             _failedCounter = failedCounter;
-            _logger = logger;
         }
 
         /// <summary>
@@ -56,8 +54,6 @@
         /// </summary>
         public AuthenticationService()
         {
-            //_loggerDecorator = new LoggerDecorator(this);
-            _logger = new NLogLogger();
             _notify = new SlackNotify();
             _profile = new Profile();
             _hash = new Sha256Hash();
@@ -70,8 +66,6 @@
         private readonly IHash _hash;
         private readonly IOtpService _otpService;
         private readonly IFailedCounter _failedCounter;
-        private readonly ILogger _logger;
-        private readonly LoggerDecorator _loggerDecorator;
 
         public bool Verify(string accountId, string password, string otp)
         {
@@ -97,9 +91,6 @@
             else
             {
                 _failedCounter.Add(accountId);
-
-
-                //_loggerDecorator.Log(accountId);
 
                 _notify.Notify($"account:{accountId} try to login failed");
 
