@@ -51,6 +51,11 @@ namespace DependencyInjectionWorkshopTests
             GivenPasswordFromDb("marsen", "hashed password");
             GivenOneTimePassword("marsen", "Error OTP");
             GivenHashedPassword("password", "hashed password");
+            ShouldAddFailedCount();
+        }
+
+        private void ShouldAddFailedCount()
+        {
             var authenticationService =
                 new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
             var result = authenticationService.Verify("marsen", "password", "OTP");
