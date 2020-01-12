@@ -7,14 +7,12 @@
 
     public class LoggerDecorator : AuthenticationDecoratorBase
     {
-        private readonly IAuthenticationService _authenticationService;
         private readonly ILogger _logger;
         private readonly IFailedCounter _failedCounter;
 
         public LoggerDecorator(IAuthenticationService authenticationService, ILogger logger,
             IFailedCounter failedCounter) : base(authenticationService)
         {
-            _authenticationService = authenticationService;
             _logger = logger;
             _failedCounter = failedCounter;
         }
