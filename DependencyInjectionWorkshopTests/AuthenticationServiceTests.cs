@@ -20,6 +20,11 @@ namespace DependencyInjectionWorkshopTests
         /// </summary>
         public AuthenticationServiceTests()
         {
+        }
+
+        [SetUp]
+        public void SetUp()
+        {
             _logger = Substitute.For<ILogger>();
             _failedCounter = Substitute.For<IFailedCounter>();
             _otpService = Substitute.For<IOtpService>();
@@ -45,6 +50,18 @@ namespace DependencyInjectionWorkshopTests
             GivenOneTimePassword("marsen", "Error OTP");
             GivenHashedPassword("password", "hashed password");
             ShouldBeInvalid();
+        }
+
+        [Test]
+        public void is_invalid_should_add_failed_count()
+        {
+            GivenPasswordFromDb("marsen", "hashed password");
+            GivenOneTimePassword("marsen", "Error OTP");
+            GivenHashedPassword("password", "hashed password");
+            var authenticationService =
+                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
+            var result = authenticationService.Verify("marsen", "password", "OTP");
+            _failedCounter.Received(1).Add("marsen");
         }
 
         private void GivenHashedPassword(string password, string hashedPassword)
