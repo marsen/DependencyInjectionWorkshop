@@ -1,4 +1,5 @@
-﻿using DependencyInjectionWorkshop.Models;
+﻿using System;
+using DependencyInjectionWorkshop.Models;
 using NSubstitute;
 using NSubstitute.Core;
 using NUnit.Framework;
@@ -15,6 +16,7 @@ namespace DependencyInjectionWorkshopTests
         private INotify _notify;
         private IProfile _profile;
         private string DefaultTestAccount = "marsen";
+        private AuthenticationService _authenticationService;
 
         [SetUp]
         public void SetUp()
@@ -25,6 +27,8 @@ namespace DependencyInjectionWorkshopTests
             _hash = Substitute.For<IHash>();
             _notify = Substitute.For<INotify>();
             _profile = Substitute.For<IProfile>();
+            _authenticationService =
+                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
         }
 
         [Test]
@@ -74,16 +78,17 @@ namespace DependencyInjectionWorkshopTests
         public void when_account_locked_throw_exception()
         {
             GivenAccountIsLocked();
-            ShouldThrowException();
+            ShouldThrow<FailedTooManyTimesException>();
         }
 
-        private void ShouldThrowException()
+        private void ShouldThrow<TException>() where TException : Exception
         {
-            var authenticationService =
-                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            TestDelegate code = () => authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+            void Code()
+            {
+                _authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+            }
 
-            Assert.Throws<FailedTooManyTimesException>(code);
+            Assert.Throws<TException>(Code);
         }
 
         private void GivenAccountIsLocked()
