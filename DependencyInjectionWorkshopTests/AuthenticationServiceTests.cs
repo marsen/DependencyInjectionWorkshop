@@ -101,9 +101,7 @@ namespace DependencyInjectionWorkshopTests
 
         private void ShouldReset()
         {
-            var authenticationService =
-                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+            var result = _authenticationService.Verify(DefaultTestAccount, "password", "OTP");
             _failedCounter.Received(1).Reset(DefaultTestAccount);
         }
 
@@ -117,9 +115,7 @@ namespace DependencyInjectionWorkshopTests
 
         private void ShouldNotify()
         {
-            var authenticationService =
-                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+            var result = _authenticationService.Verify(DefaultTestAccount, "password", "OTP");
             _notify.Received(1).Notify(Arg.Is<string>(s => s.Contains(DefaultTestAccount)));
         }
 
