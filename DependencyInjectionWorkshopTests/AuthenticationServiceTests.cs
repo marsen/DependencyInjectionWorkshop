@@ -31,9 +31,9 @@ namespace DependencyInjectionWorkshopTests
         [Test]
         public void is_valid()
         {
-            _profile.GetPassword("marsen").Returns("hashed password");
-            _otpService.CurrentOtp("marsen").Returns("OTP");
-            _hash.Hash("password").Returns("hashed password");
+            GivenPasswordFromDb("marsen", "hashed password");
+            GivenOneTimePassword("marsen", "OTP");
+            GivenHashedPassword("password", "hashed password");
             ShouldBeValid();
         }
 
