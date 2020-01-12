@@ -2,13 +2,11 @@
 {
     public class AuthenticationService : IAuthenticationService
     {
-        public AuthenticationService(IProfile profile, IHash hash, IOtpService otpService,
-            IFailedCounter failedCounter)
+        public AuthenticationService(IProfile profile, IHash hash, IOtpService otpService)
         {
             _profile = profile;
             _hash = hash;
             _otpService = otpService;
-            _failedCounter = failedCounter;
         }
 
         /// <summary>
@@ -19,28 +17,14 @@
             _profile = new Profile();
             _hash = new Sha256Hash();
             _otpService = new OtpService();
-            _failedCounter = new FailedCounter();
         }
 
         private readonly IProfile _profile;
         private readonly IHash _hash;
         private readonly IOtpService _otpService;
-        private readonly IFailedCounter _failedCounter;
-
-        public IFailedCounter FailedCounter
-        {
-            get { return _failedCounter; }
-        }
-
-        //public IFailedCounter FailedCounter
-        //{
-        //    get { return _failedCounter; }
-        //}
 
         public bool Verify(string accountId, string password, string otp)
         {
-            //failedCountDecorator.CheckLocked(accountId, this);
-
             var passwordFromDb = _profile.GetPassword(accountId);
 
             var hashedPassword = _hash.Hash(password);
@@ -57,7 +41,5 @@
                 return false;
             }
         }
-
-        private FailedCountDecorator failedCountDecorator;
     }
 }
