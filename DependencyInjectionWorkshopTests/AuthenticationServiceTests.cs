@@ -63,6 +63,21 @@ namespace DependencyInjectionWorkshopTests
             ShouldLog();
         }
 
+        [Test]
+        public void is_valid_should_reset()
+        {
+            WhenValid();
+            ShouldReset();
+        }
+
+        private void ShouldReset()
+        {
+            var authenticationService =
+                new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
+            var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+            _failedCounter.Received(1).Reset(DefaultTestAccount);
+        }
+
         protected virtual void ShouldLog()
         {
             var authenticationService =
