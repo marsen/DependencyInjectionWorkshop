@@ -14,6 +14,7 @@ namespace DependencyInjectionWorkshopTests
         private IHash _hash;
         private INotify _notify;
         private IProfile _profile;
+        private string DefaultTestAccount = "marsen";
 
         [SetUp]
         public void SetUp()
@@ -29,8 +30,8 @@ namespace DependencyInjectionWorkshopTests
         [Test]
         public void is_valid()
         {
-            GivenPasswordFromDb("marsen", "hashed password");
-            GivenOneTimePassword("marsen", "OTP");
+            GivenPasswordFromDb(DefaultTestAccount, "hashed password");
+            GivenOneTimePassword(DefaultTestAccount, "OTP");
             GivenHashedPassword("password", "hashed password");
             ShouldBeValid();
         }
@@ -39,8 +40,8 @@ namespace DependencyInjectionWorkshopTests
         [Test]
         public void is_invalid()
         {
-            GivenPasswordFromDb("marsen", "hashed password");
-            GivenOneTimePassword("marsen", "Error OTP");
+            GivenPasswordFromDb(DefaultTestAccount, "hashed password");
+            GivenOneTimePassword(DefaultTestAccount, "Error OTP");
             GivenHashedPassword("password", "hashed password");
             ShouldBeInvalid();
         }
@@ -48,8 +49,8 @@ namespace DependencyInjectionWorkshopTests
         [Test]
         public void is_invalid_should_add_failed_count()
         {
-            GivenPasswordFromDb("marsen", "hashed password");
-            GivenOneTimePassword("marsen", "Error OTP");
+            GivenPasswordFromDb(DefaultTestAccount, "hashed password");
+            GivenOneTimePassword(DefaultTestAccount, "Error OTP");
             GivenHashedPassword("password", "hashed password");
             ShouldAddFailedCount();
         }
@@ -57,13 +58,13 @@ namespace DependencyInjectionWorkshopTests
         [Test]
         public void is_invalid_should_notify()
         {
-            GivenPasswordFromDb("marsen", "hashed password");
-            GivenOneTimePassword("marsen", "Error OTP");
+            GivenPasswordFromDb(DefaultTestAccount, "hashed password");
+            GivenOneTimePassword(DefaultTestAccount, "Error OTP");
             GivenHashedPassword("password", "hashed password");
             var authenticationService =
                 new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            var result = authenticationService.Verify("marsen", "password", "OTP");
-            _notify.Received(1).Notify(Arg.Is<string>(s => s.Contains("marsen")));
+            var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+            _notify.Received(1).Notify(Arg.Is<string>(s=>s.Contains(DefaultTestAccount)));
         }
 
 
@@ -71,8 +72,8 @@ namespace DependencyInjectionWorkshopTests
         {
             var authenticationService =
                 new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            var result = authenticationService.Verify("marsen", "password", "OTP");
-            _failedCounter.Received(1).Add("marsen");
+            var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
+            _failedCounter.Received(1).Add(DefaultTestAccount);
         }
 
         private void GivenHashedPassword(string password, string hashedPassword)
@@ -94,7 +95,7 @@ namespace DependencyInjectionWorkshopTests
         {
             var authenticationService =
                 new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            var result = authenticationService.Verify("marsen", "password", "OTP");
+            var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
             Assert.IsFalse(result);
         }
 
@@ -102,7 +103,7 @@ namespace DependencyInjectionWorkshopTests
         {
             var authenticationService =
                 new AuthenticationService(_notify, _profile, _hash, _otpService, _failedCounter, _logger);
-            var result = authenticationService.Verify("marsen", "password", "OTP");
+            var result = authenticationService.Verify(DefaultTestAccount, "password", "OTP");
             Assert.IsTrue(result);
         }
     }

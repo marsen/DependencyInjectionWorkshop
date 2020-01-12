@@ -2,7 +2,8 @@
 {
     public class AuthenticationService
     {
-        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService, IFailedCounter failedCounter, ILogger logger)
+        public AuthenticationService(INotify notify, IProfile profile, IHash hash, IOtpService otpService,
+            IFailedCounter failedCounter, ILogger logger)
         {
             _notify = notify;
             _profile = profile;
